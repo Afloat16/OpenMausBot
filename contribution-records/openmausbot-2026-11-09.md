@@ -1,39 +1,42 @@
 # OpenMausBot contribution record — 2026-11-09
 
-**Ten independent upstream pull requests are open: #5083–#5092. No PR in this batch is merged at the latest verification.** Each published head matches its original locally tested source tree and the exact source SHA used by remote CI.
+**Ten formal upstream PRs; 10 open and 0 merged at 2026-11-09 15:51:38 UTC.** All ten current source heads pass full project typecheck and targeted tests. Five review follow-ups are implemented and verified in the same PRs.
 
 ## Verification
 
-- All ten published source heads pass full `pnpm typecheck` and targeted Vitest suites using the repository's actual configuration: **240 passed test executions across 15 files**. [Workflow run](https://github.com/Afloat16/claude-mem/actions/runs/42634877637).
-- The original local targeted run also passed all 240 tests, including 60 new cases and 35 regressions reproduced on the unchanged upstream base. Node 24.22.1; Vitest 4.1.11.
-- All changed TypeScript files passed Oxlint 1.80.0 with the repository configuration. Every independent branch passed `git diff --check`.
-- The complete repository test suite and application workflow were outside these targeted checks.
-- Latest upstream PR state and branch/SHA verification: 2026-11-09 15:13:18 UTC.
+- Latest exact-source checks: **282 passed test executions across 17 test files** over the ten independent branches, with full `pnpm typecheck` on every current head. Separate branch runs are recorded individually below.
+- Initial local verification: 240 passed across 15 files, including 60 new cases and 35 regressions reproduced on the original upstream base. The initial published trees were verified against the tested local trees through Git object hashes.
+- Five review revisions add targeted regressions and pass changed-file lint. TOTP and speech also pass an isolated owned application fixture and its control doctor. The Codex driver check selects six relevant cases; its other 280 cases were not run.
+- The entire repository test suite and external-provider application workflows are outside these checks.
 
 ## Independent changes
 
-| # | Change | Upstream PR | State | Exact source | Targeted tests | Full typecheck |
-|---|---|---|---|---|---:|---|
-| 1 | fix: release retry backoff timers and abort listeners | [#5083](https://github.com/milind-soni/OpenMausBot/pull/5083) | open | [`ba3c2b7c65b1`](https://github.com/Afloat16/OpenMausBot/commit/ba3c2b7c65b1f6d1a10d4a56aa173a4a94e685f7) | 23 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277861) |
-| 2 | fix: preserve automation failure history during active runs | [#5084](https://github.com/milind-soni/OpenMausBot/pull/5084) | open | [`1872e9fa09e8`](https://github.com/Afloat16/OpenMausBot/commit/1872e9fa09e81ec84946b7507df585a27a89a9fa) | 6 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277453) |
-| 3 | fix: preserve unsafe connector numeric arguments | [#5085](https://github.com/milind-soni/OpenMausBot/pull/5085) | open | [`a05ee1605344`](https://github.com/Afloat16/OpenMausBot/commit/a05ee1605344ddd79ef35fd52637864040d2ec86) | 9 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148) |
-| 4 | fix: preserve MCP SSE framing across split CRLF bytes | [#5086](https://github.com/milind-soni/OpenMausBot/pull/5086) | open | [`930ff7d757a0`](https://github.com/Afloat16/OpenMausBot/commit/930ff7d757a0337765c702ce5282d26b0d9aac6b) | 13 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278004) |
-| 5 | fix: reject incomplete Base32 groups in TOTP keys | [#5087](https://github.com/milind-soni/OpenMausBot/pull/5087) | open | [`65f33fccb3ef`](https://github.com/Afloat16/OpenMausBot/commit/65f33fccb3ef0ec8ac6cc89c2708edd334f6d1c4) | 40 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278033) |
-| 6 | fix: detect MCP name collisions from parsed Codex config | [#5088](https://github.com/milind-soni/OpenMausBot/pull/5088) | open | [`958f66787e23`](https://github.com/Afloat16/OpenMausBot/commit/958f66787e23abf8d37640d96654ed274ef6bba1) | 15 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277922) |
-| 7 | fix: retain budget exhaustion events in the thread inspector | [#5089](https://github.com/milind-soni/OpenMausBot/pull/5089) | open | [`5c300847c626`](https://github.com/Afloat16/OpenMausBot/commit/5c300847c6260e8d42aee4238f9a89dbe12195c3) | 14 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277953) |
-| 8 | fix: split unspaced speech at Unicode word boundaries | [#5090](https://github.com/milind-soni/OpenMausBot/pull/5090) | open | [`216ba4ea3b95`](https://github.com/Afloat16/OpenMausBot/commit/216ba4ea3b95eed7fcf344f6987f9c88f47a6d59) | 30 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277715) |
-| 9 | fix: reject rolled-over dates in extraction responses | [#5091](https://github.com/milind-soni/OpenMausBot/pull/5091) | open | [`ffd027c9660d`](https://github.com/Afloat16/OpenMausBot/commit/ffd027c9660d31fd35c7df95b01363e02ddd1cd0) | 71 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278129) |
-| 10 | fix: correlate connector replies before caching tool lists | [#5092](https://github.com/milind-soni/OpenMausBot/pull/5092) | open | [`3f7e2ce345cf`](https://github.com/Afloat16/OpenMausBot/commit/3f7e2ce345cf890bb472b0f93f44e532168b9aff) | 19 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277997) |
+| # | Change | Upstream PR | Current source | Targeted tests | Full typecheck |
+|---|---|---|---|---:|---|
+| 1 | fix: release retry backoff timers and abort listeners | [#5083](https://github.com/milind-soni/OpenMausBot/pull/5083) | [`ba3c2b7c65b1`](https://github.com/Afloat16/OpenMausBot/commit/ba3c2b7c65b1f6d1a10d4a56aa173a4a94e685f7) | 23 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277861) |
+| 2 | fix: preserve automation failure history during active runs | [#5084](https://github.com/milind-soni/OpenMausBot/pull/5084) | [`1872e9fa09e8`](https://github.com/Afloat16/OpenMausBot/commit/1872e9fa09e81ec84946b7507df585a27a89a9fa) | 6 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277453) |
+| 3 | fix: preserve unsafe connector numeric arguments | [#5085](https://github.com/milind-soni/OpenMausBot/pull/5085) | [`a05ee1605344`](https://github.com/Afloat16/OpenMausBot/commit/a05ee1605344ddd79ef35fd52637864040d2ec86) | 9 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148) |
+| 4 | fix: preserve MCP SSE framing across split CRLF bytes | [#5086](https://github.com/milind-soni/OpenMausBot/pull/5086) | [`930ff7d757a0`](https://github.com/Afloat16/OpenMausBot/commit/930ff7d757a0337765c702ce5282d26b0d9aac6b) | 13 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278004) |
+| 5 | fix: reject incomplete Base32 groups in TOTP keys | [#5087](https://github.com/milind-soni/OpenMausBot/pull/5087) | [`a468ff2b308d`](https://github.com/Afloat16/OpenMausBot/commit/a468ff2b308da30af96143b09880fed69a003de9) | 44 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260136016) |
+| 6 | fix: detect MCP name collisions from parsed Codex config | [#5088](https://github.com/milind-soni/OpenMausBot/pull/5088) | [`6fe4366c0b17`](https://github.com/Afloat16/OpenMausBot/commit/6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8) | 23 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42646859631/job/129262322689) |
+| 7 | fix: retain budget exhaustion events in the thread inspector | [#5089](https://github.com/milind-soni/OpenMausBot/pull/5089) | [`a331e14a1880`](https://github.com/Afloat16/OpenMausBot/commit/a331e14a18803a876ca60149286bff88e58c197a) | 30 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104388) |
+| 8 | fix: split unspaced speech at Unicode word boundaries | [#5090](https://github.com/milind-soni/OpenMausBot/pull/5090) | [`b820dff83ae5`](https://github.com/Afloat16/OpenMausBot/commit/b820dff83ae58238d90f68c54319400187661a75) | 34 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260135662) |
+| 9 | fix: reject rolled-over dates in extraction responses | [#5091](https://github.com/milind-soni/OpenMausBot/pull/5091) | [`ffd027c9660d`](https://github.com/Afloat16/OpenMausBot/commit/ffd027c9660d31fd35c7df95b01363e02ddd1cd0) | 71 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278129) |
+| 10 | fix: correlate connector replies before caching tool lists | [#5092](https://github.com/milind-soni/OpenMausBot/pull/5092) | [`13faee0bf135`](https://github.com/Afloat16/OpenMausBot/commit/13faee0bf135b35db9ce81850ec8a469d03462f1) | 29 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104705) |
 
-## Change details and verification
+## Verified review follow-ups
+
+The complete replacement PR bodies and concise review replies are in [openmausbot-review-followups-2026-11-09.md](openmausbot-review-followups-2026-11-09.md) and its matching JSON file. Existing bot release notes are preserved in each replacement body.
+
+## Change details
 
 ### 1. fix: release retry backoff timers and abort listeners
 
-[Upstream PR #5083](https://github.com/milind-soni/OpenMausBot/pull/5083) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277861)
+[Upstream PR #5083](https://github.com/milind-soni/OpenMausBot/pull/5083) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277861)
 
 Branch: `fix/retry-delay-cleanup`  
-Published source: `ba3c2b7c65b1f6d1a10d4a56aa173a4a94e685f7`  
-Original local commit: `16ffc2454e664729a4a6fa54fdc22762bb91ccbe`
+Current source: `ba3c2b7c65b1f6d1a10d4a56aa173a4a94e685f7`  
+Initial local commit: `16ffc2454e664729a4a6fa54fdc22762bb91ccbe`
 
 #### What changed
 
@@ -70,11 +73,11 @@ Does not change the retry schedule or error classification.
 
 ### 2. fix: preserve automation failure history during active runs
 
-[Upstream PR #5084](https://github.com/milind-soni/OpenMausBot/pull/5084) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277453)
+[Upstream PR #5084](https://github.com/milind-soni/OpenMausBot/pull/5084) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277453)
 
 Branch: `fix/automation-history-active-runs`  
-Published source: `1872e9fa09e81ec84946b7507df585a27a89a9fa`  
-Original local commit: `c404505ca70add7e43d65d941674b14dbea1a2d9`
+Current source: `1872e9fa09e81ec84946b7507df585a27a89a9fa`  
+Initial local commit: `c404505ca70add7e43d65d941674b14dbea1a2d9`
 
 #### What changed
 
@@ -111,11 +114,11 @@ Only the startup run window changes; the stored history and scheduler are unchan
 
 ### 3. fix: preserve unsafe connector numeric arguments
 
-[Upstream PR #5085](https://github.com/milind-soni/OpenMausBot/pull/5085) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148)
+[Upstream PR #5085](https://github.com/milind-soni/OpenMausBot/pull/5085) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148)
 
 Branch: `fix/connector-numeric-coercion`  
-Published source: `a05ee1605344ddd79ef35fd52637864040d2ec86`  
-Original local commit: `29a640e3e5ac33b7cb4b563d9756be8ba8de7834`
+Current source: `a05ee1605344ddd79ef35fd52637864040d2ec86`  
+Initial local commit: `29a640e3e5ac33b7cb4b563d9756be8ba8de7834`
 
 #### What changed
 
@@ -152,11 +155,11 @@ Safely representable integer and fractional number conversions remain supported.
 
 ### 4. fix: preserve MCP SSE framing across split CRLF bytes
 
-[Upstream PR #5086](https://github.com/milind-soni/OpenMausBot/pull/5086) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278004)
+[Upstream PR #5086](https://github.com/milind-soni/OpenMausBot/pull/5086) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278004)
 
 Branch: `fix/mcp-sse-crlf-framing`  
-Published source: `930ff7d757a0337765c702ce5282d26b0d9aac6b`  
-Original local commit: `5c800758f626af8fe884d7f154135d6f82c8e8d2`
+Current source: `930ff7d757a0337765c702ce5282d26b0d9aac6b`  
+Initial local commit: `5c800758f626af8fe884d7f154135d6f82c8e8d2`
 
 #### What changed
 
@@ -193,175 +196,267 @@ Tests use an injected in-memory stream and the existing local fake MCP server; n
 
 ### 5. fix: reject incomplete Base32 groups in TOTP keys
 
-[Upstream PR #5087](https://github.com/milind-soni/OpenMausBot/pull/5087) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278033)
+[Upstream PR #5087](https://github.com/milind-soni/OpenMausBot/pull/5087) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260136016)
 
 Branch: `fix/totp-base32-validation`  
-Published source: `65f33fccb3ef0ec8ac6cc89c2708edd334f6d1c4`  
-Original local commit: `0bfd586ccf12126e6e471412e903b2e3345c02ea`
+Current source: `a468ff2b308da30af96143b09880fed69a003de9`  
+Initial local commit: `0bfd586ccf12126e6e471412e903b2e3345c02ea`
 
 #### What changed
 
 Reject encoded input that ends with five or more leftover bits, which represent an incomplete additional symbol group. Cover both raw and otpauth setup keys while retaining padded/unpadded valid Base32 forms and the existing TOTP vectors.
 
+Keep strict Base32 decoding for new setup input, while code generation uses a private compatibility decoder for previously saved keys with an incomplete final group. Invalid alphabet characters remain rejected; no stored data is migrated.
+
 #### Why
 
-A Base32 secret with an impossible encoded length is accepted after dropping a final incomplete group. For example, appending one character to a valid 16-character setup key silently produces the same decoded bytes, hiding a malformed saved 2FA secret.
+A Base32 secret with an impossible encoded length is accepted after dropping a final incomplete group. For example, appending one character to a valid 16-character setup key silently produces the same decoded bytes, hiding malformed new setup input.
+
+Strict setup validation exposed a compatibility issue for keys already accepted and persisted by older versions. Those saved keys must keep generating the same bytes, while new malformed setup input remains rejected.
 
 #### How it was verified
 
-- Added 9 regression/compatibility test cases. On upstream base `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`, 3 targeted tests fail before the source fix.
-- Targeted Vitest 4.1.11 run on Node 24.22.1: **40 passed**, using a temporary Node-only test configuration with one worker.
-- Test files: `server/totp.test.ts`.
-- `git diff --check` passes. Changed TypeScript files pass Oxlint 1.80.0 with the repository configuration.
-- The published source head `65f33fccb3ef0ec8ac6cc89c2708edd334f6d1c4` also passes the full project `pnpm typecheck` and the repository's actual Vitest configuration: **40 passed across 1 files**, with `--environment node --maxWorkers=1 --no-file-parallelism`. [Exact-source CI check](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278033).
+##### Final head
+
+- Current source: `a468ff2b308da30af96143b09880fed69a003de9`.
+- Full project `pnpm typecheck`: passed.
+- Repository-configured targeted Vitest checks: **44 passed across 1 test files**.
+- Changed TypeScript files: Oxlint passed with no warnings or errors.
+- [Exact-source verification](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260136016).
+
+The final suite covers saved 17-, 19-, and 22-character keys at two counters, invalid-character rejection, and strict new-input parsing. An isolated owned application fixture encrypted, saved and reloaded a legacy key; POST /api/logins rejected a new 17-character key with HTTP 400 and accepted a valid 16-character key with HTTP 201. The fixture's control doctor passed.
+
+Focused `node:test` probes on the previous source `65f33fccb3ef0ec8ac6cc89c2708edd334f6d1c4` reproduced 1 failing regression and 1 passing compatibility check: [before-fix evidence](https://github.com/Afloat16/claude-mem/actions/runs/42644958000/job/129255617891).
+
+##### Initial publication
+
+The initial source `65f33fccb3ef0ec8ac6cc89c2708edd334f6d1c4` passed 40 targeted tests and full project typecheck: [initial verification](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278033). Its source tree matched the original local commit, which was also tested before publication. The final-head result above applies to the follow-up changes.
+
+#### Compatibility
+
+Only code generation for already persisted keys retains the historical byte-decoding behavior. Public decodeBase32 and parseTotpKey remain strict for new input, with no credential migration.
 
 #### Related history
 
 [#246](https://github.com/milind-soni/OpenMausBot/pull/246), [#2725](https://github.com/milind-soni/OpenMausBot/pull/2725), [#2726](https://github.com/milind-soni/OpenMausBot/pull/2726), [#2730](https://github.com/milind-soni/OpenMausBot/pull/2730). Existing TOTP setup and credential work accepts the malformed lengths. This change adds the missing decoder validation.
 
-#### Compatibility
-
-Previously accepted malformed-length saved keys will now be rejected and need correction. Valid setup keys and RFC code vectors remain supported.
-
 #### Base and head
 
-- Base: `milind-soni/OpenMausBot:main` at `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
-- Head: `Afloat16:fix/totp-base32-validation`.
-- Independent local commit: `0bfd586ccf12126e6e471412e903b2e3345c02ea`.
-- Published fork commit: `65f33fccb3ef0ec8ac6cc89c2708edd334f6d1c4`.
-- Published tree `95043b98309c238b6172d3965ddb22eca32e5bc7` is identical to the tested local commit's tree; all source and regression-test bytes were verified with Git object hashes before publishing.
+- Independent base: `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
+- Head branch: `Afloat16:fix/totp-base32-validation`.
+- Current head: `a468ff2b308da30af96143b09880fed69a003de9`.
 
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+
+<!-- coderabbit-ai-generated:v1 -->
+
+#### Summary by CodeRabbit
+
+* **Bug Fixes**
+  * Base32 secrets with incomplete trailing groups are now rejected during 2FA setup-key parsing, including secrets provided in `otpauth://` inputs.
+  * Complete base32 encodings remain accepted with or without padding.
+
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### 6. fix: detect MCP name collisions from parsed Codex config
 
-[Upstream PR #5088](https://github.com/milind-soni/OpenMausBot/pull/5088) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277922)
+[Upstream PR #5088](https://github.com/milind-soni/OpenMausBot/pull/5088) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42646859631/job/129262322689)
 
 Branch: `fix/codex-inline-mcp-collisions`  
-Published source: `958f66787e23abf8d37640d96654ed274ef6bba1`  
-Original local commit: `4e6298c0f5991575a01a254473ac35ffba6e2a0f`
+Current source: `6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8`  
+Initial local commit: `4e6298c0f5991575a01a254473ac35ffba6e2a0f`
 
 #### What changed
 
 Use parsed MCP table keys as the authoritative names when TOML parsing succeeds. Keep the existing header scan as a fallback for an unreadable config. Ignore header-looking text inside multiline strings.
 
+Reserve each allocated custom mount name against both configured names and the mounts already selected for this turn, so two custom servers cannot overwrite one another. Disable special literal config keys through a whole-table CLI override placed before per-mount overrides; ordinary names keep their existing flat overrides. Tool-scope validation and effective-config checks remain unchanged.
+
 #### Why
 
 The Codex name-reservation path only scans table headers, although the same function already parses TOML tables. Inline tables, dotted keys and Unicode-escaped names are missed, allowing custom overrides to collide with the person's existing MCP config and fail a turn.
 
+An inline configuration reserving notes could make custom notes and notes_openmausbot share one mount. A literal ambient name such as notes.prod was also split into nested CLI keys by Codex, which can reject the configuration before the prompt.
+
 #### How it was verified
 
-- Added 5 regression/compatibility test cases. On upstream base `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`, 4 targeted tests fail before the source fix.
-- Targeted Vitest 4.1.11 run on Node 24.22.1: **15 passed**, using a temporary Node-only test configuration with one worker.
-- Test files: `server/drivers/codex-mcp-names.test.ts`, `server/toml-lite.test.ts`.
-- `git diff --check` passes. Changed TypeScript files pass Oxlint 1.80.0 with the repository configuration.
-- The published source head `958f66787e23abf8d37640d96654ed274ef6bba1` also passes the full project `pnpm typecheck` and the repository's actual Vitest configuration: **15 passed across 2 files**, with `--environment node --maxWorkers=1 --no-file-parallelism`. [Exact-source CI check](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277922).
+##### Final head
+
+- Current source: `6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8`.
+- Full project `pnpm typecheck`: passed.
+- Repository-configured targeted Vitest checks: **23 passed across 3 test files**. The driver run selected 6 relevant cases; its other 280 cases were skipped.
+- Changed TypeScript files: Oxlint passed with no warnings or errors.
+- [Exact-source verification](https://github.com/Afloat16/claude-mem/actions/runs/42646859631/job/129262322689).
+
+Two new helper cases cover literal dotted/quoted names and unchanged ordinary overrides. Two new driver cases exercise inline-name collisions and a valid selected catalog beside a dotted ambient server, including preservation of built-in mounts. Four existing driver compatibility cases also pass.
+
+##### Initial publication
+
+The initial source `958f66787e23abf8d37640d96654ed274ef6bba1` passed 15 targeted tests and full project typecheck: [initial verification](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277922). Its source tree matched the original local commit, which was also tested before publication. The final-head result above applies to the follow-up changes.
+
+#### Compatibility
+
+Driver integration checks use the repository's fake app-server. The actual Codex CLI was not launched in this validation; its version 0.160.1 override and table-merge implementation was inspected directly.
 
 #### Related history
 
 [#1601](https://github.com/milind-soni/OpenMausBot/pull/1601), [#2946](https://github.com/milind-soni/OpenMausBot/pull/2946), [#4346](https://github.com/milind-soni/OpenMausBot/pull/4346). PR #1601 explicitly left inline MCP tables unsupported. This patch closes that documented gap with the parser already present on main.
 
-#### Compatibility
+Implementation references:
 
-The fallback for malformed TOML is preserved; no Codex CLI or external config is changed by the tests.
+- https://github.com/openai/codex/blob/rust-v0.160.1/codex-rs/config/src/overrides.rs
+- https://github.com/openai/codex/blob/rust-v0.160.1/codex-rs/config/src/merge.rs
 
 #### Base and head
 
-- Base: `milind-soni/OpenMausBot:main` at `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
-- Head: `Afloat16:fix/codex-inline-mcp-collisions`.
-- Independent local commit: `4e6298c0f5991575a01a254473ac35ffba6e2a0f`.
-- Published fork commit: `958f66787e23abf8d37640d96654ed274ef6bba1`.
-- Published tree `5958d22d1176d235f18f19366ffca7176df4b07c` is identical to the tested local commit's tree; all source and regression-test bytes were verified with Git object hashes before publishing.
+- Independent base: `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
+- Head branch: `Afloat16:fix/codex-inline-mcp-collisions`.
+- Current head: `6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8`.
 
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+
+<!-- coderabbit-ai-generated:v1 -->
+
+#### Summary by CodeRabbit
+
+* **Bug Fixes**
+  * Improved recognition of Codex MCP server names in configuration files, including inline and dotted table formats.
+  * Server names can still be discovered when unrelated configuration syntax is invalid.
+
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### 7. fix: retain budget exhaustion events in the thread inspector
 
-[Upstream PR #5089](https://github.com/milind-soni/OpenMausBot/pull/5089) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277953)
+[Upstream PR #5089](https://github.com/milind-soni/OpenMausBot/pull/5089) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104388)
 
 Branch: `fix/inspector-cap-events`  
-Published source: `5c300847c6260e8d42aee4238f9a89dbe12195c3`  
-Original local commit: `cc875e552498bb528ca15908e70fda041e9b8edc`
+Current source: `a331e14a18803a876ca60149286bff88e58c197a`  
+Initial local commit: `cc875e552498bb528ca15908e70fda041e9b8edc`
 
 #### What changed
 
 Validate and retain cap.exhausted records with the required string handoffPath and reason=cap. Continue discarding malformed records at the log boundary.
 
+Reject empty or whitespace-only cap handoff paths, resolve historical relative paths while replaying them, and make new handoff paths absolute even when OMB_DATA_DIR is relative. Valid persisted cap events remain in the inspector.
+
 #### Why
 
 The runtime defines cap.exhausted as a resumable terminal event with a persisted handoff, but the inspector's event guard rejects that event type. Reloading the log therefore omits the event explaining why a turn stopped and where its handoff was stored.
 
+The event contract promises an absolute handoff path, while older writers could persist a relative path. Rejecting every relative record would discard real historical handoffs.
+
 #### How it was verified
 
-- Added 1 regression/compatibility test cases. On upstream base `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`, 1 targeted tests fail before the source fix.
-- Targeted Vitest 4.1.11 run on Node 24.22.1: **14 passed**, using a temporary Node-only test configuration with one worker.
-- Test files: `server/thread-events.test.ts`.
-- `git diff --check` passes. Changed TypeScript files pass Oxlint 1.80.0 with the repository configuration.
-- The published source head `5c300847c6260e8d42aee4238f9a89dbe12195c3` also passes the full project `pnpm typecheck` and the repository's actual Vitest configuration: **14 passed across 1 files**, with `--environment node --maxWorkers=1 --no-file-parallelism`. [Exact-source CI check](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277953).
+##### Final head
+
+- Current source: `a331e14a18803a876ca60149286bff88e58c197a`.
+- Full project `pnpm typecheck`: passed.
+- Repository-configured targeted Vitest checks: **30 passed across 2 test files**.
+- Changed TypeScript files: Oxlint passed with no warnings or errors.
+- [Exact-source verification](https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104388).
+
+The malformed-record case now includes empty and whitespace paths. New regressions retain and normalize a legacy relative record, and verify that a handoff written with a relative data directory returns an absolute path in the same directory.
+
+##### Initial publication
+
+The initial source `5c300847c6260e8d42aee4238f9a89dbe12195c3` passed 14 targeted tests and full project typecheck: [initial verification](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277953). Its source tree matched the original local commit, which was also tested before publication. The final-head result above applies to the follow-up changes.
+
+#### Compatibility
+
+Relative legacy paths retain ordinary resolution against the running server's working directory. These checks ran on Linux; no cross-platform live application run is claimed.
 
 #### Related history
 
 [#3374](https://github.com/milind-soni/OpenMausBot/pull/3374). Related runtime status work does not add the missing inspector guard case.
 
-#### Compatibility
-
-Only log-reading validation changes; no runtime budget or persistence behavior is altered.
-
 #### Base and head
 
-- Base: `milind-soni/OpenMausBot:main` at `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
-- Head: `Afloat16:fix/inspector-cap-events`.
-- Independent local commit: `cc875e552498bb528ca15908e70fda041e9b8edc`.
-- Published fork commit: `5c300847c6260e8d42aee4238f9a89dbe12195c3`.
-- Published tree `e2eb088705e17f151c8d973c28deda0ba1552f0e` is identical to the tested local commit's tree; all source and regression-test bytes were verified with Git object hashes before publishing.
+- Independent base: `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
+- Head branch: `Afloat16:fix/inspector-cap-events`.
+- Current head: `a331e14a18803a876ca60149286bff88e58c197a`.
 
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+
+<!-- coderabbit-ai-generated:v1 -->
+
+#### Summary by CodeRabbit
+
+* **Bug Fixes**
+  * Improved validation of runtime handoff events so only events with a valid handoff path and the supported reason are accepted.
+
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### 8. fix: split unspaced speech at Unicode word boundaries
 
-[Upstream PR #5090](https://github.com/milind-soni/OpenMausBot/pull/5090) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277715)
+[Upstream PR #5090](https://github.com/milind-soni/OpenMausBot/pull/5090) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260135662)
 
 Branch: `fix/tts-unspaced-chunk-limits`  
-Published source: `216ba4ea3b95eed7fcf344f6987f9c88f47a6d59`  
-Original local commit: `9a3107229612f32955a4156aabd76b7a1ee85c9d`
+Current source: `b820dff83ae58238d90f68c54319400187661a75`  
+Initial local commit: `9a3107229612f32955a4156aabd76b7a1ee85c9d`
 
 #### What changed
 
 Use Node's built-in Intl.Segmenter word boundaries when there is no whitespace cut within the cap. Prevent short-fragment merging from exceeding maxChars. Keep indivisible English tokens whole as the existing tests require and preserve supplementary Unicode letters.
 
+Keep attached punctuation with an indivisible word, and fall back to complete grapheme boundaries only for oversized Katakana segments. Preserve combining marks and the first/subsequent chunk limits without splitting Latin tokens.
+
 #### Why
 
 Speech chunking only looks for spaces and a small set of spaced punctuation. Long Chinese and Japanese replies therefore remain one oversized utterance and bypass the short first-block cap, delaying the start of speech.
 
+A 320-character English word followed by a period was split into a word and a punctuation-only chunk. A long Katakana segment could still bypass the intended chunk bound because word segmentation treated it as one token.
+
 #### How it was verified
 
-- Added 3 regression/compatibility test cases. On upstream base `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`, 3 targeted tests fail before the source fix.
-- Targeted Vitest 4.1.11 run on Node 24.22.1: **30 passed**, using a temporary Node-only test configuration with one worker.
-- Test files: `server/tts/speech-text.test.ts`.
-- `git diff --check` passes. Changed TypeScript files pass Oxlint 1.80.0 with the repository configuration.
-- The published source head `216ba4ea3b95eed7fcf344f6987f9c88f47a6d59` also passes the full project `pnpm typecheck` and the repository's actual Vitest configuration: **30 passed across 1 files**, with `--environment node --maxWorkers=1 --no-file-parallelism`. [Exact-source CI check](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277715).
+##### Final head
+
+- Current source: `b820dff83ae58238d90f68c54319400187661a75`.
+- Full project `pnpm typecheck`: passed.
+- Repository-configured targeted Vitest checks: **34 passed across 1 test files**.
+- Changed TypeScript files: Oxlint passed with no warnings or errors.
+- [Exact-source verification](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260135662).
+
+Both reported cases failed on the exact previous head. The final 34-case suite passes, and an isolated owned server fixture exercised POST /api/tts/prepare for the English punctuation case and 642 code units of decomposed Katakana. Its control doctor passed.
+
+Focused `node:test` probes on the previous source `216ba4ea3b95eed7fcf344f6987f9c88f47a6d59` reproduced 2 failing regressions: [before-fix evidence](https://github.com/Afloat16/claude-mem/actions/runs/42644958000/job/129255618294).
+
+##### Initial publication
+
+The initial source `216ba4ea3b95eed7fcf344f6987f9c88f47a6d59` passed 30 targeted tests and full project typecheck: [initial verification](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277715). Its source tree matched the original local commit, which was also tested before publication. The final-head result above applies to the follow-up changes.
+
+#### Compatibility
+
+Latin tokens, including their combining marks and attached terminal punctuation, remain indivisible. Only oversized Katakana segments use the grapheme fallback. The TTS provider and dependencies are unchanged.
 
 #### Related history
 
 [#3190](https://github.com/milind-soni/OpenMausBot/pull/3190), [#3191](https://github.com/milind-soni/OpenMausBot/pull/3191), [#3545](https://github.com/milind-soni/OpenMausBot/pull/3545). Earlier voice-latency changes introduce the first-block cap but leave unspaced language text unchunked. This patch supplies language-aware word boundaries using built-in ICU.
 
-#### Compatibility
-
-No dependency or TTS-provider change. Existing English token behavior remains covered.
-
 #### Base and head
 
-- Base: `milind-soni/OpenMausBot:main` at `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
-- Head: `Afloat16:fix/tts-unspaced-chunk-limits`.
-- Independent local commit: `9a3107229612f32955a4156aabd76b7a1ee85c9d`.
-- Published fork commit: `216ba4ea3b95eed7fcf344f6987f9c88f47a6d59`.
-- Published tree `23b38690d288154fa13e29b77b991fb46e556147` is identical to the tested local commit's tree; all source and regression-test bytes were verified with Git object hashes before publishing.
+- Independent base: `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
+- Head branch: `Afloat16:fix/tts-unspaced-chunk-limits`.
+- Current head: `b820dff83ae58238d90f68c54319400187661a75`.
 
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+
+<!-- coderabbit-ai-generated:v1 -->
+
+#### Summary by CodeRabbit
+
+* **Bug Fixes**
+  * Improved speech text splitting so short adjacent phrases stay within configured length limits.
+  * Preserved complete text and supplementary Unicode letters when splitting unspaced or unusually bounded text.
+
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### 9. fix: reject rolled-over dates in extraction responses
 
-[Upstream PR #5091](https://github.com/milind-soni/OpenMausBot/pull/5091) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278129)
+[Upstream PR #5091](https://github.com/milind-soni/OpenMausBot/pull/5091) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278129)
 
 Branch: `fix/extractor-calendar-dates`  
-Published source: `ffd027c9660d31fd35c7df95b01363e02ddd1cd0`  
-Original local commit: `cdc3eecc189ead1a6fa6fe938bf987909ea21ba9`
+Current source: `ffd027c9660d31fd35c7df95b01363e02ddd1cd0`  
+Initial local commit: `cdc3eecc189ead1a6fa6fe938bf987909ea21ba9`
 
 #### What changed
 
@@ -398,41 +493,67 @@ The shared relay fixture is updated in this PR. The separate Cloud Admin should 
 
 ### 10. fix: correlate connector replies before caching tool lists
 
-[Upstream PR #5092](https://github.com/milind-soni/OpenMausBot/pull/5092) · [Exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277997)
+[Upstream PR #5092](https://github.com/milind-soni/OpenMausBot/pull/5092) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104705)
 
 Branch: `fix/connector-response-correlation`  
-Published source: `3f7e2ce345cf890bb472b0f93f44e532168b9aff`  
-Original local commit: `04950cdd5b2d983650691e7e8d5c2c35723910f7`
+Current source: `13faee0bf135b35db9ce81850ec8a469d03462f1`  
+Initial local commit: `04950cdd5b2d983650691e7e8d5c2c35723910f7`
 
 #### What changed
 
 Require a matching request ID and a response result/error, excluding server requests and notifications. Apply the same validation to JSON and SSE; keep correlated errors and replay valid cached lists under the new request ID.
 
+Preserve a null-ID JSON-RPC error as an error-only diagnostic when no correlated response exists. The diagnostic has no request ID or result; a correlated frame takes priority regardless of SSE order. Cache admission also rejects every error-bearing frame.
+
 #### Why
 
 The connector response parser accepts any direct JSON object and falls back to the last SSE frame when no matching ID exists. An unrelated tools/list response can populate the fallback cache, so a later outage is masked with a tool catalog that did not answer the original request.
 
+JSON-RPC uses a null ID when the server cannot identify a request. Dropping that error hid its useful message, but treating it as a matching response could contaminate the tools cache.
+
 #### How it was verified
 
-- Added 9 regression/compatibility test cases. On upstream base `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`, 8 targeted tests fail before the source fix.
-- Targeted Vitest 4.1.11 run on Node 24.22.1: **19 passed**, using a temporary Node-only test configuration with one worker.
-- Test files: `server/connector-tools-list.test.ts`, `server/connected-reads.test.ts`.
-- `git diff --check` passes. Changed TypeScript files pass Oxlint 1.80.0 with the repository configuration.
-- The published source head `3f7e2ce345cf890bb472b0f93f44e532168b9aff` also passes the full project `pnpm typecheck` and the repository's actual Vitest configuration: **19 passed across 2 files**, with `--environment node --maxWorkers=1 --no-file-parallelism`. [Exact-source CI check](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277997).
+##### Final head
 
-#### Related history
+- Current source: `13faee0bf135b35db9ce81850ec8a469d03462f1`.
+- Full project `pnpm typecheck`: passed.
+- Repository-configured targeted Vitest checks: **29 passed across 2 test files**.
+- Changed TypeScript files: Oxlint passed with no warnings or errors.
+- [Exact-source verification](https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104705).
 
-Exact-function and defect-term searches. No matching parseMcpResponse history result was found; regression tests reproduce cache contamination with mismatched JSON and SSE response IDs on current main.
+Ten additional cases cover JSON/SSE null-ID diagnostics, matching-response priority, invalid frames, mixed error/result frames, and cache isolation after a diagnostic.
+
+##### Initial publication
+
+The initial source `3f7e2ce345cf890bb472b0f93f44e532168b9aff` passed 19 targeted tests and full project typecheck: [initial verification](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277997). Its source tree matched the original local commit, which was also tested before publication. The final-head result above applies to the follow-up changes.
 
 #### Compatibility
 
-Malformed or unrelated frames now return null rather than being used as replies. Valid connector responses remain covered by connected-read fixtures.
+The diagnostic remains separate from a successful response. Request-ID matching stays strict and the transport framing behavior is unchanged.
+
+#### Related history
+
+No matching parseMcpResponse history result was found; regression tests reproduce cache contamination with mismatched JSON and SSE response IDs on current main.
+
+Implementation references:
+
+- https://www.jsonrpc.org/specification#response_object
 
 #### Base and head
 
-- Base: `milind-soni/OpenMausBot:main` at `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
-- Head: `Afloat16:fix/connector-response-correlation`.
-- Independent local commit: `04950cdd5b2d983650691e7e8d5c2c35723910f7`.
-- Published fork commit: `3f7e2ce345cf890bb472b0f93f44e532168b9aff`.
-- Published tree `9b688c99db4ce1d70ba1e24bd2883816c8c50fc1` is identical to the tested local commit's tree; all source and regression-test bytes were verified with Git object hashes before publishing.
+- Independent base: `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
+- Head branch: `Afloat16:fix/connector-response-correlation`.
+- Current head: `13faee0bf135b35db9ce81850ec8a469d03462f1`.
 
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+
+<!-- coderabbit-ai-generated:v1 -->
+
+#### Summary by CodeRabbit
+
+* **Bug Fixes**
+  * Improved reliability when receiving tool-list responses over standard and streamed connections. Responses are now matched to the correct request, while unrelated messages are ignored.
+  * Correctly preserves errors tied to a request and prevents unrelated results from being used as fallback data.
+  * Cached tool lists continue to work when replayed for a new request.
+
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
