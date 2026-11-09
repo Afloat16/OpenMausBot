@@ -1,10 +1,88 @@
 # OpenMausBot verified review follow-ups — 2026-11-09
 
-Five existing PRs received verified follow-up fixes. Each replacement body distinguishes its initial source from its current head and preserves the existing bot release-notes block verbatim. These are updates to the same five PRs, not additional contributions.
+Six existing PRs received verified follow-up fixes. Each published body distinguishes its initial source from its current head and preserves the existing bot release-notes block verbatim. These are updates to the same six PRs, not additional contributions.
 
-## Review follow-up completion
+## Review follow-up publication
 
-All five updated PR bodies are published and verified against their exact source heads through GitHub's API at 2026-11-09 16:02:51 UTC. The body comparison normalizes CRLF line endings and outer whitespace. All six review threads are resolved. The [Codex reply](https://github.com/milind-soni/OpenMausBot/pull/5088#discussion_r4514848681) and [JSON-RPC reply](https://github.com/milind-soni/OpenMausBot/pull/5092#discussion_r4514841954) are published and verified. The TOTP, cap-event, and speech threads were already resolved. Source commits and CI evidence are unchanged.
+All six updated PR bodies are published and verified against their source heads. Eight tracked review threads are resolved. The two numeric-container policy suggestions have [one explanation](https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515560759) and [one root-argument explanation](https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515566118), and remain unresolved for maintainer input. The original two numeric-loss findings are resolved without duplicate replies. Latest numeric publication verification: 2026-11-09 17:07:43 UTC.
+
+The fitter keeps matching JSON containers with unsafe numeric tokens as original text for validation. Numeric-looking plain text still uses the existing array-wrapping behavior. This boundary is documented in the published PR body and replies.
+
+## PR #5085
+
+[Upstream PR](https://github.com/milind-soni/OpenMausBot/pull/5085) · Current head: `91d75f1d17085115e6ed10e083f98cc71d2c5e7e` · [Final verification](https://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945)
+
+Publication: body saved and API-verified. The two original numeric-loss threads are resolved. Both policy replies are published; their threads remain unresolved for maintainer input.
+
+### Published PR body
+
+````markdown
+## Problem
+
+The argument fitter can change numeric text before the connected tool validates it. Large integers lose digits, extreme decimals underflow to zero or overflow, and a fractional value can round to an integer. Parsing arguments from JSON text can lose the original numeric token before the schema-specific guard runs.
+
+## Change
+
+Keep numeric text unchanged unless its decimal value survives conversion to a finite JavaScript number within the supported integer range. Integer schemas still require an integral value.
+
+Use the original numeric tokens supplied by the JSON reviver in the repository's required Node 24 runtime. If a JSON object or array would lose numeric information, retain its original text for normal tool validation. Check the requested object/array shape before applying that guard, so numeric-looking plain text and non-array JSON text still use the existing string-array and one-field-object wrapping behavior.
+
+## Verification
+
+### Current head
+
+Exact source: `91d75f1d17085115e6ed10e083f98cc71d2c5e7e`.
+
+- Full project `pnpm typecheck`: passed.
+- Repository-configured targeted Vitest checks: 54 passed across `server/connector-arguments.test.ts` and `server/connector-proxy.test.ts`.
+- Changed TypeScript files: Oxlint with warnings denied, passed with zero warnings or errors.
+- Official isolated fake-engine server launch and `control:omb doctor`: passed.
+
+https://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945
+
+The follow-up adds 24 numeric/compatibility unit cases and one real proxy integration case. The proxy case exercises nine requests through the production child process, schema discovery, stdin JSON-RPC, and an owned loopback HTTP upstream. It checks preserved numeric text, nested JSON, valid conversions, and plain-text array fallback.
+
+### Before-fix evidence
+
+At the initial source `a05ee1605344ddd79ef35fd52637864040d2ec86`, the new numeric suite produced 18 regression failures and four compatibility passes:
+https://github.com/Afloat16/claude-mem/actions/runs/42658225446/job/129302398527
+
+The intermediate correction `683d1fe6c6fd6a4827556dc3aee605ba91228c8c` exposed two plain-text array fallback regressions. Both were reproduced before the shape-specific correction:
+https://github.com/Afloat16/claude-mem/actions/runs/42659701187/job/129307618961
+
+### Initial publication
+
+The initial source passed nine targeted tests and full project typecheck:
+https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148
+
+## Scope
+
+These checks protect text parsed or coerced by `fitArguments`. A matching JSON container with an unsafe numeric token stays intact for tool validation, so partial field rewrites are not applied to that text. Numeric-looking plain text still uses safe wrapping: `9007199254740993` becomes a string item, while the actual JSON array `[9007199254740993]` remains text because its numeric element cannot be preserved as a Number. Already parsed numeric values retain their existing behavior; precision lost before reaching this function cannot be reconstructed here. The transport fixture uses a local stand-in for the upstream provider.
+
+Related schema-fitting work: #3932 and #3999.
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+<!-- coderabbit-ai-generated:v1 -->
+
+## Summary by CodeRabbit
+
+- **Bug Fixes**
+  - Numeric text that is too small, too large, or precision-sensitive is preserved rather than converted to a potentially inaccurate number.
+  - This behavior applies to numeric and integer arguments, including values in nested objects, arrays, and JSON text.
+  - Safe numeric values, including integral decimal spellings such as `"42.0"`, continue to convert.
+  - Quoted numeric-looking strings, ordinary text fallback, and malformed-JSON behavior remain unchanged.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
+````
+
+### Published policy replies
+
+[Reply](https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515560759) to [review comment](https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515492385); unresolved.
+
+> Keeping an unsafe JSON container as its original text is deliberate. The fitter uses JavaScript Numbers for numeric values; these tokens cannot be represented safely that way, and converting them to strings would change their JSON types. Normal tool validation can reject the unchanged input. Safe arrays and numeric-looking plain-text wrapping still work; both are covered in 91d75f1. I am leaving this tradeoff open for maintainer input.
+
+[Reply](https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515566118) to [review comment](https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515492400); unresolved.
+
+> The root-text behavior is intentional: if that JSON cannot be converted without losing a numeric value or changing its type, the complete original argument text goes to validation and no partial rename is reported. Independent fields still fit when the input is already an object; the regression covers a safe timeout beside unsafe nested JSON text. This patch keeps that boundary, with all 54 targeted tests and the real proxy transport passing at 91d75f1.
 
 ## PR #5087
 

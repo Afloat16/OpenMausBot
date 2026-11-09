@@ -1,16 +1,18 @@
 # OpenMausBot contribution record — 2026-11-09
 
-**Ten formal upstream PRs; 10 open and 0 merged at 2026-11-09 15:51:38 UTC.** All ten current source heads pass full project typecheck and targeted tests. Five review follow-ups are implemented and verified in the same PRs.
+**Ten formal upstream PRs; 10 open and 0 merged at 2026-11-09 17:07:43 UTC.** All ten current source heads pass full project typecheck and targeted tests. Six review follow-ups are implemented and verified in the same PRs.
 
-## Review follow-up completion
+## Review follow-up publication
 
-All five updated PR bodies are published and verified against their exact source heads through GitHub's API at 2026-11-09 16:02:51 UTC. The body comparison normalizes CRLF line endings and outer whitespace. All six review threads are resolved. The [Codex reply](https://github.com/milind-soni/OpenMausBot/pull/5088#discussion_r4514848681) and [JSON-RPC reply](https://github.com/milind-soni/OpenMausBot/pull/5092#discussion_r4514841954) are published and verified. The TOTP, cap-event, and speech threads were already resolved. Source commits and CI evidence are unchanged.
+All six updated PR bodies are published and verified against their source heads. Eight tracked review threads are resolved. The two numeric-container policy suggestions have [one explanation](https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515560759) and [one root-argument explanation](https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515566118), and remain unresolved for maintainer input. The original two numeric-loss findings are resolved without duplicate replies. Latest numeric publication verification: 2026-11-09 17:07:43 UTC.
+
+The fitter keeps matching JSON containers with unsafe numeric tokens as original text for validation. Numeric-looking plain text still uses the existing array-wrapping behavior. This boundary is documented in the published PR body and replies.
 
 ## Verification
 
-- Latest exact-source checks: **282 passed test executions across 17 test files** over the ten independent branches, with full `pnpm typecheck` on every current head. Separate branch runs are recorded individually below.
+- Latest exact-source checks: **327 passed test executions across 18 test files** over the ten independent branches, with full `pnpm typecheck` on every current head. Separate branch runs are recorded individually below.
 - Initial local verification: 240 passed across 15 files, including 60 new cases and 35 regressions reproduced on the original upstream base. The initial published trees were verified against the tested local trees through Git object hashes.
-- Five review revisions add targeted regressions and pass changed-file lint. TOTP and speech also pass an isolated owned application fixture and its control doctor. The Codex driver check selects six relevant cases; its other 280 cases were not run.
+- Six review revisions add targeted regressions and pass changed-file lint. TOTP and speech also pass an isolated owned application fixture and its control doctor. The Codex driver check selects six relevant cases; its other 280 cases were not run.
 - The entire repository test suite and external-provider application workflows are outside these checks.
 
 ## Independent changes
@@ -19,7 +21,7 @@ All five updated PR bodies are published and verified against their exact source
 |---|---|---|---|---:|---|
 | 1 | fix: release retry backoff timers and abort listeners | [#5083](https://github.com/milind-soni/OpenMausBot/pull/5083) | [`ba3c2b7c65b1`](https://github.com/Afloat16/OpenMausBot/commit/ba3c2b7c65b1f6d1a10d4a56aa173a4a94e685f7) | 23 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277861) |
 | 2 | fix: preserve automation failure history during active runs | [#5084](https://github.com/milind-soni/OpenMausBot/pull/5084) | [`1872e9fa09e8`](https://github.com/Afloat16/OpenMausBot/commit/1872e9fa09e81ec84946b7507df585a27a89a9fa) | 6 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220277453) |
-| 3 | fix: preserve unsafe connector numeric arguments | [#5085](https://github.com/milind-soni/OpenMausBot/pull/5085) | [`a05ee1605344`](https://github.com/Afloat16/OpenMausBot/commit/a05ee1605344ddd79ef35fd52637864040d2ec86) | 9 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148) |
+| 3 | fix: preserve unsafe connector numeric arguments | [#5085](https://github.com/milind-soni/OpenMausBot/pull/5085) | [`91d75f1d1708`](https://github.com/Afloat16/OpenMausBot/commit/91d75f1d17085115e6ed10e083f98cc71d2c5e7e) | 54 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945) |
 | 4 | fix: preserve MCP SSE framing across split CRLF bytes | [#5086](https://github.com/milind-soni/OpenMausBot/pull/5086) | [`930ff7d757a0`](https://github.com/Afloat16/OpenMausBot/commit/930ff7d757a0337765c702ce5282d26b0d9aac6b) | 13 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278004) |
 | 5 | fix: reject incomplete Base32 groups in TOTP keys | [#5087](https://github.com/milind-soni/OpenMausBot/pull/5087) | [`a468ff2b308d`](https://github.com/Afloat16/OpenMausBot/commit/a468ff2b308da30af96143b09880fed69a003de9) | 44 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260136016) |
 | 6 | fix: detect MCP name collisions from parsed Codex config | [#5088](https://github.com/milind-soni/OpenMausBot/pull/5088) | [`6fe4366c0b17`](https://github.com/Afloat16/OpenMausBot/commit/6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8) | 23 passed | [passed](https://github.com/Afloat16/claude-mem/actions/runs/42646859631/job/129262322689) |
@@ -30,7 +32,7 @@ All five updated PR bodies are published and verified against their exact source
 
 ## Verified review follow-ups
 
-The complete replacement PR bodies and concise review replies are in [openmausbot-review-followups-2026-11-09.md](openmausbot-review-followups-2026-11-09.md) and its matching JSON file. Existing bot release notes are preserved in each replacement body.
+The PR bodies, review replies, and publication states are in [openmausbot-review-followups-2026-11-09.md](openmausbot-review-followups-2026-11-09.md) and its matching JSON file. Existing bot release notes are preserved in each replacement body.
 
 ## Change details
 
@@ -118,43 +120,67 @@ Only the startup run window changes; the stored history and scheduler are unchan
 
 ### 3. fix: preserve unsafe connector numeric arguments
 
-[Upstream PR #5085](https://github.com/milind-soni/OpenMausBot/pull/5085) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148)
+[Upstream PR #5085](https://github.com/milind-soni/OpenMausBot/pull/5085) · [Current exact-source CI](https://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945)
 
 Branch: `fix/connector-numeric-coercion`  
-Current source: `a05ee1605344ddd79ef35fd52637864040d2ec86`  
+Current source: `91d75f1d17085115e6ed10e083f98cc71d2c5e7e`  
 Initial local commit: `29a640e3e5ac33b7cb4b563d9756be8ba8de7834`
 
-#### What changed
+#### Problem
 
-Only coerce finite numeric values, preserve integral values outside the safe integer range as text, and require integral values for integer schemas. Leave rejected text available for the tool's normal validation instead of silently altering its value.
+The argument fitter can change numeric text before the connected tool validates it. Large integers lose digits, extreme decimals underflow to zero or overflow, and a fractional value can round to an integer. Parsing arguments from JSON text can lose the original numeric token before the schema-specific guard runs.
 
-#### Why
+#### Change
 
-The connector argument fitter converts any decimal-looking string with Number(). Large identifiers can be rounded, very large values become Infinity and serialize as null, and fractional strings are converted even for an integer schema.
+Keep numeric text unchanged unless its decimal value survives conversion to a finite JavaScript number within the supported integer range. Integer schemas still require an integral value.
 
-#### How it was verified
+Use the original numeric tokens supplied by the JSON reviver in the repository's required Node 24 runtime. If a JSON object or array would lose numeric information, retain its original text for normal tool validation. Check the requested object/array shape before applying that guard, so numeric-looking plain text and non-array JSON text still use the existing string-array and one-field-object wrapping behavior.
 
-- Added 3 regression/compatibility test cases. On upstream base `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`, 3 targeted tests fail before the source fix.
-- Targeted Vitest 4.1.11 run on Node 24.22.1: **9 passed**, using a temporary Node-only test configuration with one worker.
-- Test files: `server/connector-arguments.test.ts`.
-- `git diff --check` passes. Changed TypeScript files pass Oxlint 1.80.0 with the repository configuration.
-- The published source head `a05ee1605344ddd79ef35fd52637864040d2ec86` also passes the full project `pnpm typecheck` and the repository's actual Vitest configuration: **9 passed across 1 files**, with `--environment node --maxWorkers=1 --no-file-parallelism`. [Exact-source CI check](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148).
+#### Verification
 
-#### Related history
+##### Current head
 
-[#3932](https://github.com/milind-soni/OpenMausBot/pull/3932), [#3999](https://github.com/milind-soni/OpenMausBot/pull/3999). The earlier PR introduced schema fitting. It does not guard the loss of precision or numeric overflow reproduced here.
+Exact source: `91d75f1d17085115e6ed10e083f98cc71d2c5e7e`.
 
-#### Compatibility
+- Full project `pnpm typecheck`: passed.
+- Repository-configured targeted Vitest checks: 54 passed across `server/connector-arguments.test.ts` and `server/connector-proxy.test.ts`.
+- Changed TypeScript files: Oxlint with warnings denied, passed with zero warnings or errors.
+- Official isolated fake-engine server launch and `control:omb doctor`: passed.
 
-Safely representable integer and fractional number conversions remain supported.
+https://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945
 
-#### Base and head
+The follow-up adds 24 numeric/compatibility unit cases and one real proxy integration case. The proxy case exercises nine requests through the production child process, schema discovery, stdin JSON-RPC, and an owned loopback HTTP upstream. It checks preserved numeric text, nested JSON, valid conversions, and plain-text array fallback.
 
-- Base: `milind-soni/OpenMausBot:main` at `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.
-- Head: `Afloat16:fix/connector-numeric-coercion`.
-- Independent local commit: `29a640e3e5ac33b7cb4b563d9756be8ba8de7834`.
-- Published fork commit: `a05ee1605344ddd79ef35fd52637864040d2ec86`.
-- Published tree `b9638b3b41d33bf7c36a6e1b9986d64aec54c97a` is identical to the tested local commit's tree; all source and regression-test bytes were verified with Git object hashes before publishing.
+##### Before-fix evidence
+
+At the initial source `a05ee1605344ddd79ef35fd52637864040d2ec86`, the new numeric suite produced 18 regression failures and four compatibility passes:
+https://github.com/Afloat16/claude-mem/actions/runs/42658225446/job/129302398527
+
+The intermediate correction `683d1fe6c6fd6a4827556dc3aee605ba91228c8c` exposed two plain-text array fallback regressions. Both were reproduced before the shape-specific correction:
+https://github.com/Afloat16/claude-mem/actions/runs/42659701187/job/129307618961
+
+##### Initial publication
+
+The initial source passed nine targeted tests and full project typecheck:
+https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148
+
+#### Scope
+
+These checks protect text parsed or coerced by `fitArguments`. A matching JSON container with an unsafe numeric token stays intact for tool validation, so partial field rewrites are not applied to that text. Numeric-looking plain text still uses safe wrapping: `9007199254740993` becomes a string item, while the actual JSON array `[9007199254740993]` remains text because its numeric element cannot be preserved as a Number. Already parsed numeric values retain their existing behavior; precision lost before reaching this function cannot be reconstructed here. The transport fixture uses a local stand-in for the upstream provider.
+
+Related schema-fitting work: #3932 and #3999.
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+<!-- coderabbit-ai-generated:v1 -->
+
+#### Summary by CodeRabbit
+
+- **Bug Fixes**
+  - Numeric text that is too small, too large, or precision-sensitive is preserved rather than converted to a potentially inaccurate number.
+  - This behavior applies to numeric and integer arguments, including values in nested objects, arrays, and JSON text.
+  - Safe numeric values, including integral decimal spellings such as `"42.0"`, continue to convert.
+  - Quoted numeric-looking strings, ordinary text fallback, and malformed-JSON behavior remain unchanged.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 
 ### 4. fix: preserve MCP SSE framing across split CRLF bytes

@@ -5,7 +5,7 @@
   "verification": {
     "base_sha": "6c7bcb02ea766429091f94b8e1e11b7b3b8675af",
     "base_tree": "47771722854a4f9aae83d2aef28070ea22862876",
-    "source_identity": "The initial ten published trees matched their original locally tested trees; original Git commit objects were reproduced. Five subsequent review revisions are verified remotely at their exact published source SHAs, as recorded per item.",
+    "source_identity": "The initial ten published trees matched their original locally tested trees; original Git commit objects were reproduced. Six subsequent review revisions are verified remotely at their exact published source SHAs, as recorded per item.",
     "targeted_tests": {
       "passed": 240,
       "failed": 0,
@@ -18,21 +18,21 @@
       "scope": "Initial publication; the latest independent-head results are in remote_ci."
     },
     "lint": "All changed TypeScript files passed Oxlint 1.80.0 with repository configuration.",
-    "whitespace": "git diff --check passed on every independent branch.",
-    "limits": "The complete repository suite and external-provider workflows were not run. All ten current source heads pass full typecheck and targeted tests. TOTP and speech additionally pass the isolated owned application fixture and control doctor; the Codex driver run selects six relevant fake-app-server cases.",
+    "whitespace": "Initial local branches: git diff --check passed on every independent branch.",
+    "limits": "The complete repository suite and external-provider workflows were not run. All ten current source heads pass full typecheck and targeted tests. Numeric arguments additionally use the real connector proxy against an owned loopback upstream and the official isolated fake-engine server doctor. TOTP and speech pass their owned application fixtures and control doctor; the Codex driver run selects six relevant fake-app-server cases.",
     "publication": {
       "branches": 10,
       "upstream_pull_requests": 10,
       "open": 10,
       "merged": 0,
       "method": "Authorized browser publication; all upstream PR head branches and exact source SHAs independently verified through GitHub's API.",
-      "verified_at": "2026-11-09 15:51:38 UTC"
+      "verified_at": "2026-11-09 17:07:43 UTC"
     },
     "deduplication": "Checked Afloat16 all-state pull requests (zero returned before this batch) and relevant upstream PR/file/function history. Related prior PRs and the independent defect for each change are recorded below; this does not claim an exhaustive semantic comparison of every historical patch.",
     "remote_ci": {
       "passed_heads": 10,
-      "tests_passed": 282,
-      "test_files": 17,
+      "tests_passed": 327,
+      "test_files": 18,
       "checks": [
         {
           "n": 1,
@@ -64,17 +64,39 @@
         },
         {
           "n": 3,
-          "run_id": 42634877637,
-          "job_id": 129220278148,
-          "source_sha": "a05ee1605344ddd79ef35fd52637864040d2ec86",
+          "run_id": 42659914559,
+          "job_id": 129308380945,
+          "source_sha": "91d75f1d17085115e6ed10e083f98cc71d2c5e7e",
           "conclusion": "success",
           "typecheck": "pnpm typecheck",
           "typecheck_result": "success",
-          "tests_command": "pnpm exec vitest run --environment node --maxWorkers=1 --no-file-parallelism server/connector-arguments.test.ts",
-          "tests_passed": 9,
-          "test_files": 1,
-          "vitest": "4.1.11",
-          "url": "https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148"
+          "tests_command": "pnpm exec vitest run --environment node --maxWorkers=1 --no-file-parallelism server/connector-arguments.test.ts server/connector-proxy.test.ts",
+          "tests_passed": 54,
+          "tests_failed": 0,
+          "tests_skipped": 0,
+          "test_files": 2,
+          "per_file": [
+            {
+              "path": "server/connector-arguments.test.ts",
+              "passed": 33
+            },
+            {
+              "path": "server/connector-proxy.test.ts",
+              "passed": 21
+            }
+          ],
+          "lint_command": "pnpm exec oxlint --deny-warnings server/connector-arguments.ts server/connector-arguments.test.ts server/connector-proxy.test.ts",
+          "lint_result": "success",
+          "lint_warnings": 0,
+          "lint_errors": 0,
+          "controlled_fixture": {
+            "launcher": "launchVerificationServer",
+            "doctor": "passed",
+            "scope": "Official isolated fake-engine server health; real connector proxy transport is verified in the test suite against an owned loopback upstream."
+          },
+          "new_cases": 25,
+          "wire_samples": 9,
+          "url": "https://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945"
         },
         {
           "n": 4,
@@ -197,15 +219,17 @@
       "pending": []
     },
     "review_followups": {
-      "bodies_published": 5,
-      "bodies_api_verified": 5,
-      "threads_total": 6,
-      "threads_resolved": 6,
-      "threads_unresolved": 0,
-      "manual_replies_published": 2,
-      "verified_at": "2026-11-09 16:02:51 UTC",
-      "status": "completed",
-      "materials_path": "contribution-records/openmausbot-review-followups-2026-11-09.json"
+      "bodies_published": 6,
+      "bodies_api_verified": 6,
+      "threads_total": 10,
+      "threads_resolved": 8,
+      "threads_unresolved": 2,
+      "manual_replies_published": 4,
+      "verified_at": "2026-11-09 17:07:43 UTC",
+      "scope": "Six tracked follow-ups; the two numeric-container policy suggestions remain open for maintainer input.",
+      "status": "implementation_verified_policy_discussion_open",
+      "materials_path": "contribution-records/openmausbot-review-followups-2026-11-09.json",
+      "numeric_materials_path": "contribution-records/openmausbot-numeric-review-2026-11-09.json"
     }
   },
   "changes": [
@@ -257,7 +281,7 @@
       "pr_number": 5083,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC"
+      "pr_verified_at": "2026-11-09 17:07:43 UTC"
     },
     {
       "n": 2,
@@ -305,7 +329,7 @@
       "pr_number": 5084,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC"
+      "pr_verified_at": "2026-11-09 17:07:43 UTC"
     },
     {
       "n": 3,
@@ -315,9 +339,10 @@
       "why": "The connector argument fitter converts any decimal-looking string with Number(). Large identifiers can be rounded, very large values become Infinity and serialize as null, and fractional strings are converted even for an integer schema.",
       "what": "Only coerce finite numeric values, preserve integral values outside the safe integer range as text, and require integral values for integer schemas. Leave rejected text available for the tool's normal validation instead of silently altering its value.",
       "tests": [
-        "server/connector-arguments.test.ts"
+        "server/connector-arguments.test.ts",
+        "server/connector-proxy.test.ts"
       ],
-      "passed": 9,
+      "passed": 54,
       "new_tests": 3,
       "baseline_failed": 3,
       "related": [
@@ -327,33 +352,240 @@
       "distinction": "The earlier PR introduced schema fitting. It does not guard the loss of precision or numeric overflow reproduced here.",
       "risk": "Safely representable integer and fractional number conversions remain supported.",
       "patch": "patches/03-connector-numeric-coercion.patch",
-      "pr_body": "pull-requests/03-connector-numeric-coercion.md",
-      "prefilled_compare_url": "https://github.com/milind-soni/OpenMausBot/compare/main...Afloat16:fix/connector-numeric-coercion?expand=1&title=fix%3A%20preserve%20unsafe%20connector%20numeric%20arguments&body=%23%23%20What%20changed%0A%0AOnly%20coerce%20finite%20numeric%20values%2C%20preserve%20integral%20values%20outside%20the%20safe%20integer%20range%20as%20text%2C%20and%20require%20integral%20values%20for%20integer%20schemas.%20Leave%20rejected%20text%20available%20for%20the%20tool's%20normal%20validation%20instead%20of%20silently%20altering%20its%20value.%0A%0A%23%23%20Why%0A%0AThe%20connector%20argument%20fitter%20converts%20any%20decimal-looking%20string%20with%20Number().%20Large%20identifiers%20can%20be%20rounded%2C%20very%20large%20values%20become%20Infinity%20and%20serialize%20as%20null%2C%20and%20fractional%20strings%20are%20converted%20even%20for%20an%20integer%20schema.%0A%0A%23%23%20How%20it%20was%20verified%0A%0A-%20Added%203%20regression%2Fcompatibility%20test%20cases.%20On%20upstream%20base%20%606c7bcb02ea766429091f94b8e1e11b7b3b8675af%60%2C%203%20targeted%20tests%20fail%20before%20the%20source%20fix.%0A-%20Targeted%20Vitest%204.1.11%20run%20on%20Node%2024.22.1%3A%20**9%20passed**%2C%20using%20a%20temporary%20Node-only%20test%20configuration%20with%20one%20worker.%0A-%20Test%20files%3A%20%60server%2Fconnector-arguments.test.ts%60.%0A-%20%60git%20diff%20--check%60%20passes.%20Changed%20TypeScript%20files%20pass%20Oxlint%201.80.0%20with%20the%20repository%20configuration.%0A-%20The%20published%20source%20head%20%60a05ee1605344ddd79ef35fd52637864040d2ec86%60%20also%20passes%20the%20full%20project%20%60pnpm%20typecheck%60%20and%20the%20repository's%20actual%20Vitest%20configuration%3A%20**9%20passed%20across%201%20files**%2C%20with%20%60--environment%20node%20--maxWorkers%3D1%20--no-file-parallelism%60.%20%5BExact-source%20CI%20check%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fclaude-mem%2Factions%2Fruns%2F42634877637%2Fjob%2F129220278148).%0A%0A%23%23%20Related%20history%0A%0A%5B%233932%5D(https%3A%2F%2Fgithub.com%2Fmilind-soni%2FOpenMausBot%2Fpull%2F3932)%2C%20%5B%233999%5D(https%3A%2F%2Fgithub.com%2Fmilind-soni%2FOpenMausBot%2Fpull%2F3999).%20The%20earlier%20PR%20introduced%20schema%20fitting.%20It%20does%20not%20guard%20the%20loss%20of%20precision%20or%20numeric%20overflow%20reproduced%20here.%0A%0A%23%23%20Compatibility%0A%0ASafely%20representable%20integer%20and%20fractional%20number%20conversions%20remain%20supported.%0A%0A%23%23%20Base%20and%20head%0A%0A-%20Base%3A%20%60milind-soni%2FOpenMausBot%3Amain%60%20at%20%606c7bcb02ea766429091f94b8e1e11b7b3b8675af%60.%0A-%20Head%3A%20%60Afloat16%3Afix%2Fconnector-numeric-coercion%60.%0A-%20Independent%20local%20commit%3A%20%6029a640e3e5ac33b7cb4b563d9756be8ba8de7834%60.%0A-%20Published%20fork%20commit%3A%20%60a05ee1605344ddd79ef35fd52637864040d2ec86%60.%0A-%20Published%20tree%20%60b9638b3b41d33bf7c36a6e1b9986d64aec54c97a%60%20is%20identical%20to%20the%20tested%20local%20commit's%20tree%3B%20all%20source%20and%20regression-test%20bytes%20were%20verified%20with%20Git%20object%20hashes%20before%20publishing.%0A",
+      "pr_body": "## Problem\n\nThe argument fitter can change numeric text before the connected tool validates it. Large integers lose digits, extreme decimals underflow to zero or overflow, and a fractional value can round to an integer. Parsing arguments from JSON text can lose the original numeric token before the schema-specific guard runs.\n\n## Change\n\nKeep numeric text unchanged unless its decimal value survives conversion to a finite JavaScript number within the supported integer range. Integer schemas still require an integral value.\n\nUse the original numeric tokens supplied by the JSON reviver in the repository's required Node 24 runtime. If a JSON object or array would lose numeric information, retain its original text for normal tool validation. Check the requested object/array shape before applying that guard, so numeric-looking plain text and non-array JSON text still use the existing string-array and one-field-object wrapping behavior.\n\n## Verification\n\n### Current head\n\nExact source: `91d75f1d17085115e6ed10e083f98cc71d2c5e7e`.\n\n- Full project `pnpm typecheck`: passed.\n- Repository-configured targeted Vitest checks: 54 passed across `server/connector-arguments.test.ts` and `server/connector-proxy.test.ts`.\n- Changed TypeScript files: Oxlint with warnings denied, passed with zero warnings or errors.\n- Official isolated fake-engine server launch and `control:omb doctor`: passed.\n\nhttps://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945\n\nThe follow-up adds 24 numeric/compatibility unit cases and one real proxy integration case. The proxy case exercises nine requests through the production child process, schema discovery, stdin JSON-RPC, and an owned loopback HTTP upstream. It checks preserved numeric text, nested JSON, valid conversions, and plain-text array fallback.\n\n### Before-fix evidence\n\nAt the initial source `a05ee1605344ddd79ef35fd52637864040d2ec86`, the new numeric suite produced 18 regression failures and four compatibility passes:\nhttps://github.com/Afloat16/claude-mem/actions/runs/42658225446/job/129302398527\n\nThe intermediate correction `683d1fe6c6fd6a4827556dc3aee605ba91228c8c` exposed two plain-text array fallback regressions. Both were reproduced before the shape-specific correction:\nhttps://github.com/Afloat16/claude-mem/actions/runs/42659701187/job/129307618961\n\n### Initial publication\n\nThe initial source passed nine targeted tests and full project typecheck:\nhttps://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148\n\n## Scope\n\nThese checks protect text parsed or coerced by `fitArguments`. A matching JSON container with an unsafe numeric token stays intact for tool validation, so partial field rewrites are not applied to that text. Numeric-looking plain text still uses safe wrapping: `9007199254740993` becomes a string item, while the actual JSON array `[9007199254740993]` remains text because its numeric element cannot be preserved as a Number. Already parsed numeric values retain their existing behavior; precision lost before reaching this function cannot be reconstructed here. The transport fixture uses a local stand-in for the upstream provider.\n\nRelated schema-fitting work: #3932 and #3999.\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n<!-- coderabbit-ai-generated:v1 -->\n\n## Summary by CodeRabbit\n\n- **Bug Fixes**\n  - Numeric text that is too small, too large, or precision-sensitive is preserved rather than converted to a potentially inaccurate number.\n  - This behavior applies to numeric and integer arguments, including values in nested objects, arrays, and JSON text.\n  - Safe numeric values, including integral decimal spellings such as `\"42.0\"`, continue to convert.\n  - Quoted numeric-looking strings, ordinary text fallback, and malformed-JSON behavior remain unchanged.\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+      "prefilled_compare_url": "https://github.com/milind-soni/OpenMausBot/compare/main...Afloat16:fix/connector-numeric-coercion?expand=1&title=fix%3A%20preserve%20unsafe%20connector%20numeric%20arguments&body=%23%23%20Problem%0A%0AThe%20argument%20fitter%20can%20change%20numeric%20text%20before%20the%20connected%20tool%20validates%20it.%20Large%20integers%20lose%20digits%2C%20extreme%20decimals%20underflow%20to%20zero%20or%20overflow%2C%20and%20a%20fractional%20value%20can%20round%20to%20an%20integer.%20Parsing%20arguments%20from%20JSON%20text%20can%20lose%20the%20original%20numeric%20token%20before%20the%20schema-specific%20guard%20runs.%0A%0A%23%23%20Change%0A%0AKeep%20numeric%20text%20unchanged%20unless%20its%20decimal%20value%20survives%20conversion%20to%20a%20finite%20JavaScript%20number%20within%20the%20supported%20integer%20range.%20Integer%20schemas%20still%20require%20an%20integral%20value.%0A%0AUse%20the%20original%20numeric%20tokens%20supplied%20by%20the%20JSON%20reviver%20in%20the%20repository's%20required%20Node%2024%20runtime.%20If%20a%20JSON%20object%20or%20array%20would%20lose%20numeric%20information%2C%20retain%20its%20original%20text%20for%20normal%20tool%20validation.%20Check%20the%20requested%20object%2Farray%20shape%20before%20applying%20that%20guard%2C%20so%20numeric-looking%20plain%20text%20and%20non-array%20JSON%20text%20still%20use%20the%20existing%20string-array%20and%20one-field-object%20wrapping%20behavior.%0A%0A%23%23%20Verification%0A%0A%23%23%23%20Current%20head%0A%0AExact%20source%3A%20%6091d75f1d17085115e6ed10e083f98cc71d2c5e7e%60.%0A%0A-%20Full%20project%20%60pnpm%20typecheck%60%3A%20passed.%0A-%20Repository-configured%20targeted%20Vitest%20checks%3A%2054%20passed%20across%20%60server%2Fconnector-arguments.test.ts%60%20and%20%60server%2Fconnector-proxy.test.ts%60.%0A-%20Changed%20TypeScript%20files%3A%20Oxlint%20with%20warnings%20denied%2C%20passed%20with%20zero%20warnings%20or%20errors.%0A-%20Official%20isolated%20fake-engine%20server%20launch%20and%20%60control%3Aomb%20doctor%60%3A%20passed.%0A%0Ahttps%3A%2F%2Fgithub.com%2FAfloat16%2Fclaude-mem%2Factions%2Fruns%2F42659914559%2Fjob%2F129308380945%0A%0AThe%20follow-up%20adds%2024%20numeric%2Fcompatibility%20unit%20cases%20and%20one%20real%20proxy%20integration%20case.%20The%20proxy%20case%20exercises%20nine%20requests%20through%20the%20production%20child%20process%2C%20schema%20discovery%2C%20stdin%20JSON-RPC%2C%20and%20an%20owned%20loopback%20HTTP%20upstream.%20It%20checks%20preserved%20numeric%20text%2C%20nested%20JSON%2C%20valid%20conversions%2C%20and%20plain-text%20array%20fallback.%0A%0A%23%23%23%20Before-fix%20evidence%0A%0AAt%20the%20initial%20source%20%60a05ee1605344ddd79ef35fd52637864040d2ec86%60%2C%20the%20new%20numeric%20suite%20produced%2018%20regression%20failures%20and%20four%20compatibility%20passes%3A%0Ahttps%3A%2F%2Fgithub.com%2FAfloat16%2Fclaude-mem%2Factions%2Fruns%2F42658225446%2Fjob%2F129302398527%0A%0AThe%20intermediate%20correction%20%60683d1fe6c6fd6a4827556dc3aee605ba91228c8c%60%20exposed%20two%20plain-text%20array%20fallback%20regressions.%20Both%20were%20reproduced%20before%20the%20shape-specific%20correction%3A%0Ahttps%3A%2F%2Fgithub.com%2FAfloat16%2Fclaude-mem%2Factions%2Fruns%2F42659701187%2Fjob%2F129307618961%0A%0A%23%23%23%20Initial%20publication%0A%0AThe%20initial%20source%20passed%20nine%20targeted%20tests%20and%20full%20project%20typecheck%3A%0Ahttps%3A%2F%2Fgithub.com%2FAfloat16%2Fclaude-mem%2Factions%2Fruns%2F42634877637%2Fjob%2F129220278148%0A%0A%23%23%20Scope%0A%0AThese%20checks%20protect%20text%20parsed%20or%20coerced%20by%20%60fitArguments%60.%20A%20matching%20JSON%20container%20with%20an%20unsafe%20numeric%20token%20stays%20intact%20for%20tool%20validation%2C%20so%20partial%20field%20rewrites%20are%20not%20applied%20to%20that%20text.%20Numeric-looking%20plain%20text%20still%20uses%20safe%20wrapping%3A%20%609007199254740993%60%20becomes%20a%20string%20item%2C%20while%20the%20actual%20JSON%20array%20%60%5B9007199254740993%5D%60%20remains%20text%20because%20its%20numeric%20element%20cannot%20be%20preserved%20as%20a%20Number.%20Already%20parsed%20numeric%20values%20retain%20their%20existing%20behavior%3B%20precision%20lost%20before%20reaching%20this%20function%20cannot%20be%20reconstructed%20here.%20The%20transport%20fixture%20uses%20a%20local%20stand-in%20for%20the%20upstream%20provider.%0A%0ARelated%20schema-fitting%20work%3A%20%233932%20and%20%233999.%0A%0A%3C!--%20This%20is%20an%20auto-generated%20comment%3A%20release%20notes%20by%20coderabbit.ai%20--%3E%0A%3C!--%20coderabbit-ai-generated%3Av1%20--%3E%0A%0A%23%23%20Summary%20by%20CodeRabbit%0A%0A-%20**Bug%20Fixes**%0A%20%20-%20Numeric%20text%20that%20is%20too%20small%2C%20too%20large%2C%20or%20precision-sensitive%20is%20preserved%20rather%20than%20converted%20to%20a%20potentially%20inaccurate%20number.%0A%20%20-%20This%20behavior%20applies%20to%20numeric%20and%20integer%20arguments%2C%20including%20values%20in%20nested%20objects%2C%20arrays%2C%20and%20JSON%20text.%0A%20%20-%20Safe%20numeric%20values%2C%20including%20integral%20decimal%20spellings%20such%20as%20%60%2242.0%22%60%2C%20continue%20to%20convert.%0A%20%20-%20Quoted%20numeric-looking%20strings%2C%20ordinary%20text%20fallback%2C%20and%20malformed-JSON%20behavior%20remain%20unchanged.%0A%3C!--%20end%20of%20auto-generated%20comment%3A%20release%20notes%20by%20coderabbit.ai%20--%3E",
       "remote_status": "upstream_pr_open",
       "merged": false,
-      "tests_command": "node ../tooling/node_modules/vitest/vitest.mjs run --config ../vitest.review.config.mjs server/connector-arguments.test.ts",
-      "remote_sha": "a05ee1605344ddd79ef35fd52637864040d2ec86",
-      "tree_sha": "b9638b3b41d33bf7c36a6e1b9986d64aec54c97a",
+      "tests_command": "pnpm exec vitest run --environment node --maxWorkers=1 --no-file-parallelism server/connector-arguments.test.ts server/connector-proxy.test.ts",
+      "remote_sha": "91d75f1d17085115e6ed10e083f98cc71d2c5e7e",
+      "tree_sha": "57e33eccc925ae123836b30bd78b66482448119c",
       "pr_url": "https://github.com/milind-soni/OpenMausBot/pull/5085",
-      "body": "## What changed\n\nOnly coerce finite numeric values, preserve integral values outside the safe integer range as text, and require integral values for integer schemas. Leave rejected text available for the tool's normal validation instead of silently altering its value.\n\n## Why\n\nThe connector argument fitter converts any decimal-looking string with Number(). Large identifiers can be rounded, very large values become Infinity and serialize as null, and fractional strings are converted even for an integer schema.\n\n## How it was verified\n\n- Added 3 regression/compatibility test cases. On upstream base `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`, 3 targeted tests fail before the source fix.\n- Targeted Vitest 4.1.11 run on Node 24.22.1: **9 passed**, using a temporary Node-only test configuration with one worker.\n- Test files: `server/connector-arguments.test.ts`.\n- `git diff --check` passes. Changed TypeScript files pass Oxlint 1.80.0 with the repository configuration.\n- The published source head `a05ee1605344ddd79ef35fd52637864040d2ec86` also passes the full project `pnpm typecheck` and the repository's actual Vitest configuration: **9 passed across 1 files**, with `--environment node --maxWorkers=1 --no-file-parallelism`. [Exact-source CI check](https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148).\n\n## Related history\n\n[#3932](https://github.com/milind-soni/OpenMausBot/pull/3932), [#3999](https://github.com/milind-soni/OpenMausBot/pull/3999). The earlier PR introduced schema fitting. It does not guard the loss of precision or numeric overflow reproduced here.\n\n## Compatibility\n\nSafely representable integer and fractional number conversions remain supported.\n\n## Base and head\n\n- Base: `milind-soni/OpenMausBot:main` at `6c7bcb02ea766429091f94b8e1e11b7b3b8675af`.\n- Head: `Afloat16:fix/connector-numeric-coercion`.\n- Independent local commit: `29a640e3e5ac33b7cb4b563d9756be8ba8de7834`.\n- Published fork commit: `a05ee1605344ddd79ef35fd52637864040d2ec86`.\n- Published tree `b9638b3b41d33bf7c36a6e1b9986d64aec54c97a` is identical to the tested local commit's tree; all source and regression-test bytes were verified with Git object hashes before publishing.\n",
+      "body": "## Problem\n\nThe argument fitter can change numeric text before the connected tool validates it. Large integers lose digits, extreme decimals underflow to zero or overflow, and a fractional value can round to an integer. Parsing arguments from JSON text can lose the original numeric token before the schema-specific guard runs.\n\n## Change\n\nKeep numeric text unchanged unless its decimal value survives conversion to a finite JavaScript number within the supported integer range. Integer schemas still require an integral value.\n\nUse the original numeric tokens supplied by the JSON reviver in the repository's required Node 24 runtime. If a JSON object or array would lose numeric information, retain its original text for normal tool validation. Check the requested object/array shape before applying that guard, so numeric-looking plain text and non-array JSON text still use the existing string-array and one-field-object wrapping behavior.\n\n## Verification\n\n### Current head\n\nExact source: `91d75f1d17085115e6ed10e083f98cc71d2c5e7e`.\n\n- Full project `pnpm typecheck`: passed.\n- Repository-configured targeted Vitest checks: 54 passed across `server/connector-arguments.test.ts` and `server/connector-proxy.test.ts`.\n- Changed TypeScript files: Oxlint with warnings denied, passed with zero warnings or errors.\n- Official isolated fake-engine server launch and `control:omb doctor`: passed.\n\nhttps://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945\n\nThe follow-up adds 24 numeric/compatibility unit cases and one real proxy integration case. The proxy case exercises nine requests through the production child process, schema discovery, stdin JSON-RPC, and an owned loopback HTTP upstream. It checks preserved numeric text, nested JSON, valid conversions, and plain-text array fallback.\n\n### Before-fix evidence\n\nAt the initial source `a05ee1605344ddd79ef35fd52637864040d2ec86`, the new numeric suite produced 18 regression failures and four compatibility passes:\nhttps://github.com/Afloat16/claude-mem/actions/runs/42658225446/job/129302398527\n\nThe intermediate correction `683d1fe6c6fd6a4827556dc3aee605ba91228c8c` exposed two plain-text array fallback regressions. Both were reproduced before the shape-specific correction:\nhttps://github.com/Afloat16/claude-mem/actions/runs/42659701187/job/129307618961\n\n### Initial publication\n\nThe initial source passed nine targeted tests and full project typecheck:\nhttps://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148\n\n## Scope\n\nThese checks protect text parsed or coerced by `fitArguments`. A matching JSON container with an unsafe numeric token stays intact for tool validation, so partial field rewrites are not applied to that text. Numeric-looking plain text still uses safe wrapping: `9007199254740993` becomes a string item, while the actual JSON array `[9007199254740993]` remains text because its numeric element cannot be preserved as a Number. Already parsed numeric values retain their existing behavior; precision lost before reaching this function cannot be reconstructed here. The transport fixture uses a local stand-in for the upstream provider.\n\nRelated schema-fitting work: #3932 and #3999.\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n<!-- coderabbit-ai-generated:v1 -->\n\n## Summary by CodeRabbit\n\n- **Bug Fixes**\n  - Numeric text that is too small, too large, or precision-sensitive is preserved rather than converted to a potentially inaccurate number.\n  - This behavior applies to numeric and integer arguments, including values in nested objects, arrays, and JSON text.\n  - Safe numeric values, including integral decimal spellings such as `\"42.0\"`, continue to convert.\n  - Quoted numeric-looking strings, ordinary text fallback, and malformed-JSON behavior remain unchanged.\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
       "remote_ci": {
         "n": 3,
-        "run_id": 42634877637,
-        "job_id": 129220278148,
-        "source_sha": "a05ee1605344ddd79ef35fd52637864040d2ec86",
+        "run_id": 42659914559,
+        "job_id": 129308380945,
+        "source_sha": "91d75f1d17085115e6ed10e083f98cc71d2c5e7e",
         "conclusion": "success",
         "typecheck": "pnpm typecheck",
         "typecheck_result": "success",
-        "tests_command": "pnpm exec vitest run --environment node --maxWorkers=1 --no-file-parallelism server/connector-arguments.test.ts",
-        "tests_passed": 9,
-        "test_files": 1,
-        "vitest": "4.1.11",
-        "url": "https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148"
+        "tests_command": "pnpm exec vitest run --environment node --maxWorkers=1 --no-file-parallelism server/connector-arguments.test.ts server/connector-proxy.test.ts",
+        "tests_passed": 54,
+        "tests_failed": 0,
+        "tests_skipped": 0,
+        "test_files": 2,
+        "per_file": [
+          {
+            "path": "server/connector-arguments.test.ts",
+            "passed": 33
+          },
+          {
+            "path": "server/connector-proxy.test.ts",
+            "passed": 21
+          }
+        ],
+        "lint_command": "pnpm exec oxlint --deny-warnings server/connector-arguments.ts server/connector-arguments.test.ts server/connector-proxy.test.ts",
+        "lint_result": "success",
+        "lint_warnings": 0,
+        "lint_errors": 0,
+        "controlled_fixture": {
+          "launcher": "launchVerificationServer",
+          "doctor": "passed",
+          "scope": "Official isolated fake-engine server health; real connector proxy transport is verified in the test suite against an owned loopback upstream."
+        },
+        "new_cases": 25,
+        "wire_samples": 9,
+        "url": "https://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945"
       },
       "pr_number": 5085,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC"
+      "pr_verified_at": "2026-11-09 17:07:43 UTC",
+      "original_remote_sha": "a05ee1605344ddd79ef35fd52637864040d2ec86",
+      "original_tests_command": "node ../tooling/node_modules/vitest/vitest.mjs run --config ../vitest.review.config.mjs server/connector-arguments.test.ts",
+      "initial_passed": 9,
+      "initial_tests": [
+        "server/connector-arguments.test.ts"
+      ],
+      "prior_ci": [
+        {
+          "n": 3,
+          "run_id": 42634877637,
+          "job_id": 129220278148,
+          "source_sha": "a05ee1605344ddd79ef35fd52637864040d2ec86",
+          "conclusion": "success",
+          "typecheck": "pnpm typecheck",
+          "typecheck_result": "success",
+          "tests_command": "pnpm exec vitest run --environment node --maxWorkers=1 --no-file-parallelism server/connector-arguments.test.ts",
+          "tests_passed": 9,
+          "test_files": 1,
+          "vitest": "4.1.11",
+          "url": "https://github.com/Afloat16/claude-mem/actions/runs/42634877637/job/129220278148"
+        }
+      ],
+      "review_new_cases": 25,
+      "new_tests_total": 28,
+      "review_files": [
+        "server/connector-arguments.ts",
+        "server/connector-arguments.test.ts",
+        "server/connector-proxy.test.ts"
+      ],
+      "review_materials_updated_at": "2026-11-09 17:07:43 UTC",
+      "review_verification": {
+        "status": "success",
+        "source_sha": "91d75f1d17085115e6ed10e083f98cc71d2c5e7e",
+        "before": {
+          "run_id": 42658225446,
+          "job_id": 129302398527,
+          "production_source": "a05ee1605344ddd79ef35fd52637864040d2ec86",
+          "test_only_head": "afcfd6abf13dbcabd2ebeac11f6fdae053a81e5e",
+          "conclusion": "success",
+          "expected_failures": 18,
+          "compatibility_passes": 4,
+          "url": "https://github.com/Afloat16/claude-mem/actions/runs/42658225446/job/129302398527"
+        },
+        "compatibility_before": {
+          "run_id": 42659701187,
+          "job_id": 129307618961,
+          "source_sha": "683d1fe6c6fd6a4827556dc3aee605ba91228c8c",
+          "expected_failed_controls": 2,
+          "conclusion": "success",
+          "url": "https://github.com/Afloat16/claude-mem/actions/runs/42659701187/job/129307618961"
+        },
+        "intermediate": {
+          "source_sha": "683d1fe6c6fd6a4827556dc3aee605ba91228c8c",
+          "run_id": 42658746339,
+          "job_id": 129304248671,
+          "conclusion": "success",
+          "superseded": "Plain-text array fallback compatibility correction pending",
+          "url": "https://github.com/Afloat16/claude-mem/actions/runs/42658746339/job/129304248671"
+        },
+        "final": {
+          "n": 3,
+          "run_id": 42659914559,
+          "job_id": 129308380945,
+          "source_sha": "91d75f1d17085115e6ed10e083f98cc71d2c5e7e",
+          "conclusion": "success",
+          "typecheck": "pnpm typecheck",
+          "typecheck_result": "success",
+          "tests_command": "pnpm exec vitest run --environment node --maxWorkers=1 --no-file-parallelism server/connector-arguments.test.ts server/connector-proxy.test.ts",
+          "tests_passed": 54,
+          "tests_failed": 0,
+          "tests_skipped": 0,
+          "test_files": 2,
+          "per_file": [
+            {
+              "path": "server/connector-arguments.test.ts",
+              "passed": 33
+            },
+            {
+              "path": "server/connector-proxy.test.ts",
+              "passed": 21
+            }
+          ],
+          "lint_command": "pnpm exec oxlint --deny-warnings server/connector-arguments.ts server/connector-arguments.test.ts server/connector-proxy.test.ts",
+          "lint_result": "success",
+          "lint_warnings": 0,
+          "lint_errors": 0,
+          "controlled_fixture": {
+            "launcher": "launchVerificationServer",
+            "doctor": "passed",
+            "scope": "Official isolated fake-engine server health; real connector proxy transport is verified in the test suite against an owned loopback upstream."
+          },
+          "new_cases": 25,
+          "wire_samples": 9,
+          "url": "https://github.com/Afloat16/claude-mem/actions/runs/42659914559/job/129308380945"
+        }
+      },
+      "review_followup": {
+        "what": "Preserve decimal text whose value changes during numeric conversion, including underflow, overflow, unsafe integers, and fractions rounded to integers. Check original JSON numeric tokens before consuming a matching object or array. Preserve existing plain-text array wrapping when the parsed shape is not the requested shape.",
+        "why": "The numeric guard ran after Number or JSON.parse had already lost information. Numeric-looking text used as a search string or ID also needs its existing safe array fallback.",
+        "coverage": "Twenty-four new unit cases cover numeric range and precision, root and nested JSON, array fallback, exponent and zero spellings, and quoted strings. One integration case sends nine requests through the production connector proxy and a loopback HTTP upstream. Final related suites pass 33 argument tests and 21 proxy tests.",
+        "limitations": "A matching JSON container with unsafe numeric tokens stays intact for normal tool validation; partial fitting of that text is intentionally deferred. Already parsed numeric values keep prior behavior. The transport fixture uses an owned loopback upstream, and the official server fixture uses the fake engine.",
+        "references": [
+          "https://github.com/milind-soni/OpenMausBot/blob/91d75f1d17085115e6ed10e083f98cc71d2c5e7e/package.json"
+        ],
+        "added_cases": 25,
+        "source_sha": "91d75f1d17085115e6ed10e083f98cc71d2c5e7e",
+        "scope": "Same primary PR #5085",
+        "status": "implementation_verified_policy_discussion_open",
+        "body_publication_status": "published_and_api_verified",
+        "body_verification": {
+          "verified_at": "2026-11-09 17:07:43 UTC",
+          "head_matches": true,
+          "body_matches": true,
+          "normalization": "CRLF normalized to LF and outer whitespace trimmed"
+        },
+        "review_threads": [
+          {
+            "id": "PRRT_kwDOT1lw9861UPbx",
+            "path": "server/connector-arguments.ts",
+            "resolved": true,
+            "comment_ids": [
+              4514469384
+            ]
+          },
+          {
+            "id": "PRRT_kwDOT1lw9861UPb_",
+            "path": "server/connector-arguments.ts",
+            "resolved": true,
+            "comment_ids": [
+              4514469410
+            ]
+          },
+          {
+            "id": "PRRT_kwDOT1lw9861WoSA",
+            "path": "server/connector-arguments.ts",
+            "resolved": false,
+            "comment_ids": [
+              4515492385,
+              4515560759
+            ]
+          },
+          {
+            "id": "PRRT_kwDOT1lw9861WoSK",
+            "path": "server/connector-arguments.ts",
+            "resolved": false,
+            "comment_ids": [
+              4515492400,
+              4515566118
+            ]
+          }
+        ],
+        "review_reply_publication": {
+          "status": "published_pending_maintainer",
+          "replies_count": 2,
+          "verified_at": "2026-11-09 17:07:43 UTC"
+        },
+        "completed_implementation_at": "2026-11-09 17:07:43 UTC"
+      },
+      "review_replies": [
+        {
+          "comment_id": 4515492385,
+          "thread_id": "PRRT_kwDOT1lw9861WoSA",
+          "url": "https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515492385",
+          "path": "server/connector-arguments.ts",
+          "status": "published_pending_maintainer",
+          "body": "Keeping an unsafe JSON container as its original text is deliberate. The fitter uses JavaScript Numbers for numeric values; these tokens cannot be represented safely that way, and converting them to strings would change their JSON types. Normal tool validation can reject the unchanged input. Safe arrays and numeric-looking plain-text wrapping still work; both are covered in 91d75f1. I am leaving this tradeoff open for maintainer input.",
+          "published_comment_id": 4515560759,
+          "published_url": "https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515560759",
+          "resolved": false,
+          "verified_at": "2026-11-09 17:07:43 UTC"
+        },
+        {
+          "comment_id": 4515492400,
+          "thread_id": "PRRT_kwDOT1lw9861WoSK",
+          "url": "https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515492400",
+          "path": "server/connector-arguments.ts",
+          "status": "published_pending_maintainer",
+          "body": "The root-text behavior is intentional: if that JSON cannot be converted without losing a numeric value or changing its type, the complete original argument text goes to validation and no partial rename is reported. Independent fields still fit when the input is already an object; the regression covers a safe timeout beside unsafe nested JSON text. This patch keeps that boundary, with all 54 targeted tests and the real proxy transport passing at 91d75f1.",
+          "published_comment_id": 4515566118,
+          "published_url": "https://github.com/milind-soni/OpenMausBot/pull/5085#discussion_r4515566118",
+          "resolved": false,
+          "verified_at": "2026-11-09 17:07:43 UTC"
+        }
+      ],
+      "bot_release_notes_preserved": true
     },
     {
       "n": 4,
@@ -402,7 +634,7 @@
       "pr_number": 5086,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC"
+      "pr_verified_at": "2026-11-09 17:07:43 UTC"
     },
     {
       "n": 5,
@@ -460,7 +692,7 @@
       "pr_number": 5087,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC",
+      "pr_verified_at": "2026-11-09 17:07:43 UTC",
       "original_remote_sha": "65f33fccb3ef0ec8ac6cc89c2708edd334f6d1c4",
       "prior_ci": [
         {
@@ -581,7 +813,7 @@
       "pr_number": 5088,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC",
+      "pr_verified_at": "2026-11-09 17:07:43 UTC",
       "original_remote_sha": "958f66787e23abf8d37640d96654ed274ef6bba1",
       "prior_ci": [
         {
@@ -697,7 +929,7 @@
       "pr_number": 5089,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC",
+      "pr_verified_at": "2026-11-09 17:07:43 UTC",
       "original_remote_sha": "5c300847c6260e8d42aee4238f9a89dbe12195c3",
       "prior_ci": [
         {
@@ -814,7 +1046,7 @@
       "pr_number": 5090,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC",
+      "pr_verified_at": "2026-11-09 17:07:43 UTC",
       "original_remote_sha": "216ba4ea3b95eed7fcf344f6987f9c88f47a6d59",
       "prior_ci": [
         {
@@ -936,7 +1168,7 @@
       "pr_number": 5091,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC"
+      "pr_verified_at": "2026-11-09 17:07:43 UTC"
     },
     {
       "n": 10,
@@ -982,7 +1214,7 @@
       "pr_number": 5092,
       "pr_state": "open",
       "merged_at": null,
-      "pr_verified_at": "2026-11-09 15:51:38 UTC",
+      "pr_verified_at": "2026-11-09 17:07:43 UTC",
       "original_remote_sha": "3f7e2ce345cf890bb472b0f93f44e532168b9aff",
       "prior_ci": [
         {
@@ -1050,5 +1282,5 @@
       "review_materials_updated_at": "2026-11-09 16:02:51 UTC"
     }
   ],
-  "updated_at": "2026-11-09 16:02:51 UTC"
+  "updated_at": "2026-11-09 17:07:43 UTC"
 }
