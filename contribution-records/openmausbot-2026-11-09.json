@@ -195,6 +195,17 @@
         }
       ],
       "pending": []
+    },
+    "review_followups": {
+      "bodies_published": 5,
+      "bodies_api_verified": 5,
+      "threads_total": 6,
+      "threads_resolved": 6,
+      "threads_unresolved": 0,
+      "manual_replies_published": 2,
+      "verified_at": "2026-11-09 16:02:51 UTC",
+      "status": "completed",
+      "materials_path": "contribution-records/openmausbot-review-followups-2026-11-09.json"
     }
   },
   "changes": [
@@ -489,11 +500,34 @@
         "coverage": "The final suite covers saved 17-, 19-, and 22-character keys at two counters, invalid-character rejection, and strict new-input parsing. An isolated owned application fixture encrypted, saved and reloaded a legacy key; POST /api/logins rejected a new 17-character key with HTTP 400 and accepted a valid 16-character key with HTTP 201. The fixture's control doctor passed.",
         "limitations": "Only code generation for already persisted keys retains the historical byte-decoding behavior. Public decodeBase32 and parseTotpKey remain strict for new input, with no credential migration.",
         "references": [],
-        "reply": "Fixed in `a468ff2b308da30af96143b09880fed69a003de9`. Saved TOTP keys retain the byte-decoding behavior used when they were accepted, while parseTotpKey and decodeBase32 still reject incomplete Base32 groups for new input. Regressions cover 17-, 19-, and 22-character saved keys at two counters and invalid-character rejection. An isolated encrypted-vault reload and the real login route also passed; new invalid setup remains rejected. Full typecheck, all 44 tests, changed-file lint and the controlled application fixture pass: https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260136016"
+        "reply": "Fixed in `a468ff2b308da30af96143b09880fed69a003de9`. Saved TOTP keys retain the byte-decoding behavior used when they were accepted, while parseTotpKey and decodeBase32 still reject incomplete Base32 groups for new input. Regressions cover 17-, 19-, and 22-character saved keys at two counters and invalid-character rejection. An isolated encrypted-vault reload and the real login route also passed; new invalid setup remains rejected. Full typecheck, all 44 tests, changed-file lint and the controlled application fixture pass: https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260136016",
+        "body_publication_status": "published_and_api_verified",
+        "body_verification": {
+          "verified_at": "2026-11-09 16:02:51 UTC",
+          "head_matches": true,
+          "body_matches": true,
+          "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+          "source": "GitHub pull request API"
+        },
+        "review_threads": [
+          {
+            "id": "PRRT_kwDOT1lw9861T8Ma",
+            "resolved": true,
+            "comment_ids": [
+              4514340782
+            ]
+          }
+        ],
+        "review_reply_publication": {
+          "status": "not_needed_threads_already_resolved",
+          "verified_at": "2026-11-09 16:02:51 UTC"
+        },
+        "status": "completed",
+        "completed_at": "2026-11-09 16:02:51 UTC"
       },
       "review_reply": "Fixed in `a468ff2b308da30af96143b09880fed69a003de9`. Saved TOTP keys retain the byte-decoding behavior used when they were accepted, while parseTotpKey and decodeBase32 still reject incomplete Base32 groups for new input. Regressions cover 17-, 19-, and 22-character saved keys at two counters and invalid-character rejection. An isolated encrypted-vault reload and the real login route also passed; new invalid setup remains rejected. Full typecheck, all 44 tests, changed-file lint and the controlled application fixture pass: https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260136016",
       "bot_release_notes_preserved": true,
-      "review_materials_updated_at": "2026-11-09 15:51:38 UTC"
+      "review_materials_updated_at": "2026-11-09 16:02:51 UTC"
     },
     {
       "n": 6,
@@ -583,13 +617,40 @@
           "https://github.com/openai/codex/blob/rust-v0.160.1/codex-rs/config/src/overrides.rs",
           "https://github.com/openai/codex/blob/rust-v0.160.1/codex-rs/config/src/merge.rs"
         ],
-        "reply": "Fixed in `6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8`. Custom mounts now reserve every chosen name, including earlier custom mounts. Scoped turns disable literal configured names with a whole-table CLI override before adding the selected mounts, so dotted names stay literal and the override cannot erase built-in mount entries. The tool-scope grammar remains unchanged. Full project typecheck, 17 helper/TOML cases, 6 targeted driver cases, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42646859631/job/129262322689"
+        "reply": "Fixed in `6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8`. Custom mounts now reserve every chosen name, including earlier custom mounts. Scoped turns disable literal configured names with a whole-table CLI override before adding the selected mounts, so dotted names stay literal and the override cannot erase built-in mount entries. The tool-scope grammar remains unchanged. Full project typecheck, 17 helper/TOML cases, 6 targeted driver cases, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42646859631/job/129262322689",
+        "body_publication_status": "published_and_api_verified",
+        "body_verification": {
+          "verified_at": "2026-11-09 16:02:51 UTC",
+          "head_matches": true,
+          "body_matches": true,
+          "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+          "source": "GitHub pull request API"
+        },
+        "review_threads": [
+          {
+            "id": "PRRT_kwDOT1lw9861T-MQ",
+            "resolved": true,
+            "comment_ids": [
+              4514354346,
+              4514848681,
+              4514854143
+            ]
+          }
+        ],
+        "review_reply_publication": {
+          "status": "published_and_api_verified",
+          "comment_id": 4514848681,
+          "url": "https://github.com/milind-soni/OpenMausBot/pull/5088#discussion_r4514848681",
+          "verified_at": "2026-11-09 16:02:51 UTC"
+        },
+        "status": "completed",
+        "completed_at": "2026-11-09 16:02:51 UTC"
       },
       "review_new_cases": 4,
       "review_reply": "Fixed in `6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8`. Custom mounts now reserve every chosen name, including earlier custom mounts. Scoped turns disable literal configured names with a whole-table CLI override before adding the selected mounts, so dotted names stay literal and the override cannot erase built-in mount entries. The tool-scope grammar remains unchanged. Full project typecheck, 17 helper/TOML cases, 6 targeted driver cases, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42646859631/job/129262322689",
       "initial_risk": "The fallback for malformed TOML is preserved; no Codex CLI or external config is changed by the tests.",
       "bot_release_notes_preserved": true,
-      "review_materials_updated_at": "2026-11-09 15:51:38 UTC"
+      "review_materials_updated_at": "2026-11-09 16:02:51 UTC"
     },
     {
       "n": 7,
@@ -668,13 +729,36 @@
         "coverage": "The malformed-record case now includes empty and whitespace paths. New regressions retain and normalize a legacy relative record, and verify that a handoff written with a relative data directory returns an absolute path in the same directory.",
         "limitations": "Relative legacy paths retain ordinary resolution against the running server's working directory. These checks ran on Linux; no cross-platform live application run is claimed.",
         "references": [],
-        "reply": "Fixed in `a331e14a18803a876ca60149286bff88e58c197a`. Empty handoff paths are rejected, new handoffs use an absolute directory, and replay resolves existing relative paths instead of dropping those cap events. This preserves relative OMB_DATA_DIR installations while returning an absolute inspector path. Full project typecheck, all 30 thread-event/handoff tests, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104388"
+        "reply": "Fixed in `a331e14a18803a876ca60149286bff88e58c197a`. Empty handoff paths are rejected, new handoffs use an absolute directory, and replay resolves existing relative paths instead of dropping those cap events. This preserves relative OMB_DATA_DIR installations while returning an absolute inspector path. Full project typecheck, all 30 thread-event/handoff tests, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104388",
+        "body_publication_status": "published_and_api_verified",
+        "body_verification": {
+          "verified_at": "2026-11-09 16:02:51 UTC",
+          "head_matches": true,
+          "body_matches": true,
+          "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+          "source": "GitHub pull request API"
+        },
+        "review_threads": [
+          {
+            "id": "PRRT_kwDOT1lw9861T2mj",
+            "resolved": true,
+            "comment_ids": [
+              4514303612
+            ]
+          }
+        ],
+        "review_reply_publication": {
+          "status": "not_needed_threads_already_resolved",
+          "verified_at": "2026-11-09 16:02:51 UTC"
+        },
+        "status": "completed",
+        "completed_at": "2026-11-09 16:02:51 UTC"
       },
       "review_new_cases": 2,
       "review_reply": "Fixed in `a331e14a18803a876ca60149286bff88e58c197a`. Empty handoff paths are rejected, new handoffs use an absolute directory, and replay resolves existing relative paths instead of dropping those cap events. This preserves relative OMB_DATA_DIR installations while returning an absolute inspector path. Full project typecheck, all 30 thread-event/handoff tests, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104388",
       "initial_risk": "Only log-reading validation changes; no runtime budget or persistence behavior is altered.",
       "bot_release_notes_preserved": true,
-      "review_materials_updated_at": "2026-11-09 15:51:38 UTC"
+      "review_materials_updated_at": "2026-11-09 16:02:51 UTC"
     },
     {
       "n": 8,
@@ -770,11 +854,41 @@
         "coverage": "Both reported cases failed on the exact previous head. The final 34-case suite passes, and an isolated owned server fixture exercised POST /api/tts/prepare for the English punctuation case and 642 code units of decomposed Katakana. Its control doctor passed.",
         "limitations": "Latin tokens, including their combining marks and attached terminal punctuation, remain indivisible. Only oversized Katakana segments use the grapheme fallback. The TTS provider and dependencies are unchanged.",
         "references": [],
-        "reply": "Fixed in `b820dff83ae58238d90f68c54319400187661a75`. Terminal punctuation stays attached to an indivisible word. Oversized Katakana segments fall back to grapheme boundaries, preserving combining marks and the first/subsequent chunk limits; Latin tokens remain indivisible. Both reported cases failed against the previous head and now pass, including the real /api/tts/prepare route. Full typecheck, all 34 tests, changed-file lint and the controlled application fixture pass: https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260135662"
+        "reply": "Fixed in `b820dff83ae58238d90f68c54319400187661a75`. Terminal punctuation stays attached to an indivisible word. Oversized Katakana segments fall back to grapheme boundaries, preserving combining marks and the first/subsequent chunk limits; Latin tokens remain indivisible. Both reported cases failed against the previous head and now pass, including the real /api/tts/prepare route. Full typecheck, all 34 tests, changed-file lint and the controlled application fixture pass: https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260135662",
+        "body_publication_status": "published_and_api_verified",
+        "body_verification": {
+          "verified_at": "2026-11-09 16:02:51 UTC",
+          "head_matches": true,
+          "body_matches": true,
+          "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+          "source": "GitHub pull request API"
+        },
+        "review_threads": [
+          {
+            "id": "PRRT_kwDOT1lw9861T9mj",
+            "resolved": true,
+            "comment_ids": [
+              4514350517
+            ]
+          },
+          {
+            "id": "PRRT_kwDOT1lw9861T9mw",
+            "resolved": true,
+            "comment_ids": [
+              4514350533
+            ]
+          }
+        ],
+        "review_reply_publication": {
+          "status": "not_needed_threads_already_resolved",
+          "verified_at": "2026-11-09 16:02:51 UTC"
+        },
+        "status": "completed",
+        "completed_at": "2026-11-09 16:02:51 UTC"
       },
       "review_reply": "Fixed in `b820dff83ae58238d90f68c54319400187661a75`. Terminal punctuation stays attached to an indivisible word. Oversized Katakana segments fall back to grapheme boundaries, preserving combining marks and the first/subsequent chunk limits; Latin tokens remain indivisible. Both reported cases failed against the previous head and now pass, including the real /api/tts/prepare route. Full typecheck, all 34 tests, changed-file lint and the controlled application fixture pass: https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260135662",
       "bot_release_notes_preserved": true,
-      "review_materials_updated_at": "2026-11-09 15:51:38 UTC"
+      "review_materials_updated_at": "2026-11-09 16:02:51 UTC"
     },
     {
       "n": 9,
@@ -900,14 +1014,41 @@
         "references": [
           "https://www.jsonrpc.org/specification#response_object"
         ],
-        "reply": "Fixed in `13faee0bf135b35db9ce81850ec8a469d03462f1`. Null-ID backend errors now survive as error-only diagnostics without an id or result. A matching response wins over those diagnostics in either SSE order, and neither diagnostics nor other error-bearing frames can populate the tools cache. Full project typecheck, all 29 connector/connected-read tests, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104705"
+        "reply": "Fixed in `13faee0bf135b35db9ce81850ec8a469d03462f1`. Null-ID backend errors now survive as error-only diagnostics without an id or result. A matching response wins over those diagnostics in either SSE order, and neither diagnostics nor other error-bearing frames can populate the tools cache. Full project typecheck, all 29 connector/connected-read tests, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104705",
+        "body_publication_status": "published_and_api_verified",
+        "body_verification": {
+          "verified_at": "2026-11-09 16:02:51 UTC",
+          "head_matches": true,
+          "body_matches": true,
+          "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+          "source": "GitHub pull request API"
+        },
+        "review_threads": [
+          {
+            "id": "PRRT_kwDOT1lw9861T38M",
+            "resolved": true,
+            "comment_ids": [
+              4514312598,
+              4514841954,
+              4514853968
+            ]
+          }
+        ],
+        "review_reply_publication": {
+          "status": "published_and_api_verified",
+          "comment_id": 4514841954,
+          "url": "https://github.com/milind-soni/OpenMausBot/pull/5092#discussion_r4514841954",
+          "verified_at": "2026-11-09 16:02:51 UTC"
+        },
+        "status": "completed",
+        "completed_at": "2026-11-09 16:02:51 UTC"
       },
       "review_new_cases": 10,
       "review_reply": "Fixed in `13faee0bf135b35db9ce81850ec8a469d03462f1`. Null-ID backend errors now survive as error-only diagnostics without an id or result. A matching response wins over those diagnostics in either SSE order, and neither diagnostics nor other error-bearing frames can populate the tools cache. Full project typecheck, all 29 connector/connected-read tests, and changed-file lint pass: https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104705",
       "initial_risk": "Malformed or unrelated frames now return null rather than being used as replies. Valid connector responses remain covered by connected-read fixtures.",
       "bot_release_notes_preserved": true,
-      "review_materials_updated_at": "2026-11-09 15:51:38 UTC"
+      "review_materials_updated_at": "2026-11-09 16:02:51 UTC"
     }
   ],
-  "updated_at": "2026-11-09 15:51:38 UTC"
+  "updated_at": "2026-11-09 16:02:51 UTC"
 }

@@ -2,11 +2,17 @@
 
 Five existing PRs received verified follow-up fixes. Each replacement body distinguishes its initial source from its current head and preserves the existing bot release-notes block verbatim. These are updates to the same five PRs, not additional contributions.
 
+## Review follow-up completion
+
+All five updated PR bodies are published and verified against their exact source heads through GitHub's API at 2026-11-09 16:02:51 UTC. The body comparison normalizes CRLF line endings and outer whitespace. All six review threads are resolved. The [Codex reply](https://github.com/milind-soni/OpenMausBot/pull/5088#discussion_r4514848681) and [JSON-RPC reply](https://github.com/milind-soni/OpenMausBot/pull/5092#discussion_r4514841954) are published and verified. The TOTP, cap-event, and speech threads were already resolved. Source commits and CI evidence are unchanged.
+
 ## PR #5087
+
+Publication: body saved and API-verified; all 1 review thread resolved. No additional reply was needed after the threads were resolved.
 
 [Upstream PR](https://github.com/milind-soni/OpenMausBot/pull/5087) · Current head: `a468ff2b308da30af96143b09880fed69a003de9` · [Final verification](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260136016)
 
-### Complete replacement body
+### Published PR body
 
 ````markdown
 ## What changed
@@ -74,9 +80,11 @@ Fixed in `a468ff2b308da30af96143b09880fed69a003de9`. Saved TOTP keys retain the 
 
 ## PR #5088
 
+Publication: body saved and API-verified; all 1 review thread resolved. [Published review reply](https://github.com/milind-soni/OpenMausBot/pull/5088#discussion_r4514848681).
+
 [Upstream PR](https://github.com/milind-soni/OpenMausBot/pull/5088) · Current head: `6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8` · [Final verification](https://github.com/Afloat16/claude-mem/actions/runs/42646859631/job/129262322689)
 
-### Complete replacement body
+### Published PR body
 
 ````markdown
 ## What changed
@@ -147,9 +155,11 @@ Fixed in `6fe4366c0b17651bed6c87e42f0c6e99cd5b2ba8`. Custom mounts now reserve e
 
 ## PR #5089
 
+Publication: body saved and API-verified; all 1 review thread resolved. No additional reply was needed after the threads were resolved.
+
 [Upstream PR](https://github.com/milind-soni/OpenMausBot/pull/5089) · Current head: `a331e14a18803a876ca60149286bff88e58c197a` · [Final verification](https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104388)
 
-### Complete replacement body
+### Published PR body
 
 ````markdown
 ## What changed
@@ -214,9 +224,11 @@ Fixed in `a331e14a18803a876ca60149286bff88e58c197a`. Empty handoff paths are rej
 
 ## PR #5090
 
+Publication: body saved and API-verified; all 2 review threads resolved. No additional reply was needed after the threads were resolved.
+
 [Upstream PR](https://github.com/milind-soni/OpenMausBot/pull/5090) · Current head: `b820dff83ae58238d90f68c54319400187661a75` · [Final verification](https://github.com/Afloat16/claude-mem/actions/runs/42646240191/job/129260135662)
 
-### Complete replacement body
+### Published PR body
 
 ````markdown
 ## What changed
@@ -284,9 +296,11 @@ Fixed in `b820dff83ae58238d90f68c54319400187661a75`. Terminal punctuation stays 
 
 ## PR #5092
 
+Publication: body saved and API-verified; all 1 review thread resolved. [Published review reply](https://github.com/milind-soni/OpenMausBot/pull/5092#discussion_r4514841954).
+
 [Upstream PR](https://github.com/milind-soni/OpenMausBot/pull/5092) · Current head: `13faee0bf135b35db9ce81850ec8a469d03462f1` · [Final verification](https://github.com/Afloat16/claude-mem/actions/runs/42645375907/job/129257104705)
 
-### Complete replacement body
+### Published PR body
 
 ````markdown
 ## What changed

@@ -1,6 +1,6 @@
 {
   "repository": "milind-soni/OpenMausBot",
-  "updated_at": "2026-11-09 15:51:38 UTC",
+  "updated_at": "2026-11-09 16:02:51 UTC",
   "items": [
     {
       "pr_number": 5087,
@@ -55,8 +55,32 @@
         "url": "https://github.com/Afloat16/claude-mem/actions/runs/42644958000/job/129255617891"
       },
       "release_notes_preserved": true,
-      "body_publication_status": "ready_for_authorized_browser_update",
-      "review_comment_id": null
+      "body_publication_status": "published_and_api_verified",
+      "review_comment_id": 4514340782,
+      "body_verification": {
+        "verified_at": "2026-11-09 16:02:51 UTC",
+        "head_matches": true,
+        "body_matches": true,
+        "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+        "source": "GitHub pull request API"
+      },
+      "review_threads": [
+        {
+          "id": "PRRT_kwDOT1lw9861T8Ma",
+          "resolved": true,
+          "comment_ids": [
+            4514340782
+          ]
+        }
+      ],
+      "review_comment_ids": [
+        4514340782
+      ],
+      "follow_up_status": "completed",
+      "review_reply_publication": {
+        "status": "not_needed_threads_already_resolved",
+        "verified_at": "2026-11-09 16:02:51 UTC"
+      }
     },
     {
       "pr_number": 5088,
@@ -100,8 +124,36 @@
       },
       "before_ci": null,
       "release_notes_preserved": true,
-      "body_publication_status": "ready_for_authorized_browser_update",
-      "review_comment_id": 4514354346
+      "body_publication_status": "published_and_api_verified",
+      "review_comment_id": 4514354346,
+      "body_verification": {
+        "verified_at": "2026-11-09 16:02:51 UTC",
+        "head_matches": true,
+        "body_matches": true,
+        "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+        "source": "GitHub pull request API"
+      },
+      "review_threads": [
+        {
+          "id": "PRRT_kwDOT1lw9861T-MQ",
+          "resolved": true,
+          "comment_ids": [
+            4514354346,
+            4514848681,
+            4514854143
+          ]
+        }
+      ],
+      "review_comment_ids": [
+        4514354346
+      ],
+      "follow_up_status": "completed",
+      "review_reply_publication": {
+        "status": "published_and_api_verified",
+        "comment_id": 4514848681,
+        "url": "https://github.com/milind-soni/OpenMausBot/pull/5088#discussion_r4514848681",
+        "verified_at": "2026-11-09 16:02:51 UTC"
+      }
     },
     {
       "pr_number": 5089,
@@ -141,8 +193,32 @@
       },
       "before_ci": null,
       "release_notes_preserved": true,
-      "body_publication_status": "ready_for_authorized_browser_update",
-      "review_comment_id": 4514303612
+      "body_publication_status": "published_and_api_verified",
+      "review_comment_id": 4514303612,
+      "body_verification": {
+        "verified_at": "2026-11-09 16:02:51 UTC",
+        "head_matches": true,
+        "body_matches": true,
+        "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+        "source": "GitHub pull request API"
+      },
+      "review_threads": [
+        {
+          "id": "PRRT_kwDOT1lw9861T2mj",
+          "resolved": true,
+          "comment_ids": [
+            4514303612
+          ]
+        }
+      ],
+      "review_comment_ids": [
+        4514303612
+      ],
+      "follow_up_status": "completed",
+      "review_reply_publication": {
+        "status": "not_needed_threads_already_resolved",
+        "verified_at": "2026-11-09 16:02:51 UTC"
+      }
     },
     {
       "pr_number": 5090,
@@ -196,8 +272,40 @@
         "url": "https://github.com/Afloat16/claude-mem/actions/runs/42644958000/job/129255618294"
       },
       "release_notes_preserved": true,
-      "body_publication_status": "ready_for_authorized_browser_update",
-      "review_comment_id": null
+      "body_publication_status": "published_and_api_verified",
+      "review_comment_id": 4514350517,
+      "body_verification": {
+        "verified_at": "2026-11-09 16:02:51 UTC",
+        "head_matches": true,
+        "body_matches": true,
+        "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+        "source": "GitHub pull request API"
+      },
+      "review_threads": [
+        {
+          "id": "PRRT_kwDOT1lw9861T9mj",
+          "resolved": true,
+          "comment_ids": [
+            4514350517
+          ]
+        },
+        {
+          "id": "PRRT_kwDOT1lw9861T9mw",
+          "resolved": true,
+          "comment_ids": [
+            4514350533
+          ]
+        }
+      ],
+      "review_comment_ids": [
+        4514350517,
+        4514350533
+      ],
+      "follow_up_status": "completed",
+      "review_reply_publication": {
+        "status": "not_needed_threads_already_resolved",
+        "verified_at": "2026-11-09 16:02:51 UTC"
+      }
     },
     {
       "pr_number": 5092,
@@ -237,8 +345,46 @@
       },
       "before_ci": null,
       "release_notes_preserved": true,
-      "body_publication_status": "ready_for_authorized_browser_update",
-      "review_comment_id": 4514312598
+      "body_publication_status": "published_and_api_verified",
+      "review_comment_id": 4514312598,
+      "body_verification": {
+        "verified_at": "2026-11-09 16:02:51 UTC",
+        "head_matches": true,
+        "body_matches": true,
+        "normalization": "CRLF normalized to LF and outer whitespace trimmed",
+        "source": "GitHub pull request API"
+      },
+      "review_threads": [
+        {
+          "id": "PRRT_kwDOT1lw9861T38M",
+          "resolved": true,
+          "comment_ids": [
+            4514312598,
+            4514841954,
+            4514853968
+          ]
+        }
+      ],
+      "review_comment_ids": [
+        4514312598
+      ],
+      "follow_up_status": "completed",
+      "review_reply_publication": {
+        "status": "published_and_api_verified",
+        "comment_id": 4514841954,
+        "url": "https://github.com/milind-soni/OpenMausBot/pull/5092#discussion_r4514841954",
+        "verified_at": "2026-11-09 16:02:51 UTC"
+      }
     }
-  ]
+  ],
+  "status": "All five published PR bodies verified and all six review threads resolved",
+  "publication": {
+    "bodies_published": 5,
+    "bodies_api_verified": 5,
+    "threads_total": 6,
+    "threads_resolved": 6,
+    "threads_unresolved": 0,
+    "manual_replies_published": 2,
+    "verified_at": "2026-11-09 16:02:51 UTC"
+  }
 }

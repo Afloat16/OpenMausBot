@@ -2,6 +2,10 @@
 
 **Ten formal upstream PRs; 10 open and 0 merged at 2026-11-09 15:51:38 UTC.** All ten current source heads pass full project typecheck and targeted tests. Five review follow-ups are implemented and verified in the same PRs.
 
+## Review follow-up completion
+
+All five updated PR bodies are published and verified against their exact source heads through GitHub's API at 2026-11-09 16:02:51 UTC. The body comparison normalizes CRLF line endings and outer whitespace. All six review threads are resolved. The [Codex reply](https://github.com/milind-soni/OpenMausBot/pull/5088#discussion_r4514848681) and [JSON-RPC reply](https://github.com/milind-soni/OpenMausBot/pull/5092#discussion_r4514841954) are published and verified. The TOTP, cap-event, and speech threads were already resolved. Source commits and CI evidence are unchanged.
+
 ## Verification
 
 - Latest exact-source checks: **282 passed test executions across 17 test files** over the ten independent branches, with full `pnpm typecheck` on every current head. Separate branch runs are recorded individually below.
