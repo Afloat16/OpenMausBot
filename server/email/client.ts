@@ -229,10 +229,12 @@ export async function listMessages(account: EmailAccount, guard: EmailGuard, inp
     try {
       const total = client.mailbox ? client.mailbox.exists : 0;
       if (!total) return { total: 0, messages: [] };
+      if (input.beforeUid === 1) return { total, messages: [] };
       const out: MessageSummary[] = [];
       if (input.beforeUid) {
-        const uids = (await client.search({ uid: `1:${input.beforeUid - 1}` }, { uid: true })) || [];
-        for await (const message of client.fetch(uids.slice(-input.limit), QUERY, { uid: true })) out.push(summary(message));
+        const uids = await client.search({ uid: `1:${input.beforeUid - 1}` }, { uid: true });
+        if (uids === false) throw new EmailError("server", "The mail server could not complete the search. No results are available.");
+        if (uids.length) for await (const message of client.fetch(uids.slice(-input.limit), QUERY, { uid: true })) out.push(summary(message));
       } else {
         for await (const message of client.fetch(`${Math.max(1, total - input.limit + 1)}:*`, QUERY)) out.push(summary(message));
       }
@@ -247,10 +249,11 @@ export async function searchMessages(account: EmailAccount, guard: EmailGuard, i
   return imapSession(account, guard, async (client) => {
     const lock = await client.getMailboxLock(input.mailbox, { readOnly: true });
     try {
-      const uids = (await client.search({
+      const uids = await client.search({
         ...(input.text ? { text: input.text } : {}), ...(input.from ? { from: input.from } : {}), ...(input.to ? { to: input.to } : {}), ...(input.subject ? { subject: input.subject } : {}),
         ...(input.since ? { since: input.since } : {}), ...(input.before ? { before: input.before } : {}), ...(input.unread ? { seen: false } : {}),
-      }, { uid: true })) || [];
+      }, { uid: true });
+      if (uids === false) throw new EmailError("server", "The mail server could not complete the search. No results are available.");
       const out: MessageSummary[] = [];
       if (uids.length) for await (const message of client.fetch(uids.slice(-input.limit), QUERY, { uid: true })) out.push(summary(message));
       return { found: uids.length, messages: out.sort((a, b) => b.uid - a.uid) };
