@@ -68,6 +68,7 @@ export const GMAIL_PROFILE_TOOL = "GMAIL_GET_PROFILE";
 export const GMAIL_MESSAGE_TOOL = "GMAIL_FETCH_MESSAGE_BY_MESSAGE_ID";
 export const GMAIL_THREAD_TOOL = "GMAIL_FETCH_MESSAGE_BY_THREAD_ID";
 const CALENDAR_READS_AT_ONCE = 4;
+const CALENDAR_PAGES = 100;
 const CALENDAR_NAME_MAX = 80;
 const GOOGLE_NOT_FOUND = /\brequested entity was not found\b/i;
 const MESSAGE_WORD = /\b(?:message|email|thread)\b/i;
@@ -263,7 +264,7 @@ export function emailsFromData(data: unknown): EmailHeader[] {
   return headers;
 }
 
-/** Gmail's page token for more messages, or undefined on the last page. */
+/** Google's page token for more results, or undefined on the last page. */
 export function nextPageOf(data: unknown): string | undefined {
   const token = [record(data), record(record(data)?.response_data)].map((body) => body?.nextPageToken).find((value) => typeof value === "string" && value);
   return typeof token === "string" ? token : undefined;
@@ -431,9 +432,19 @@ export function createConnectedReads(deps: ConnectedReadDeps): ConnectedReads {
       if (times.some((time) => !Number.isFinite(time))) throw new SourceError(app, "the time window was not a finite time");
     }
 
-    async function calendars(signal?: AbortSignal): Promise<ReturnType<typeof calendarsFromData>> {
-      const data = await call(CALENDARS_TOOL, {}, signal ? { signal } : {});
-      return parsed("googlecalendar", () => calendarsFromData(data));
+    async function calendarPages<T>(slug: string, args: Record<string, unknown>, pageKey: "page_token" | "pageToken", parse: (data: unknown) => T[], signal: AbortSignal): Promise<T[]> {
+      const found: T[] = [];
+      const seen = new Set<string>();
+      let page: string | undefined;
+      for (let index = 0; index < CALENDAR_PAGES; index++) {
+        const data = await call(slug, { ...args, ...(page ? { [pageKey]: page } : {}) }, { signal });
+        found.push(...parsed("googlecalendar", () => parse(data)));
+        page = nextPageOf(data);
+        if (!page) return found;
+        if (seen.has(page)) throw new SourceError("googlecalendar", `${slug} returned a repeated page token`);
+        seen.add(page);
+      }
+      throw new SourceError("googlecalendar", `${slug} returned too many pages to read completely`);
     }
 
     return {
@@ -441,15 +452,14 @@ export function createConnectedReads(deps: ConnectedReadDeps): ConnectedReads {
         requireFinite("googlecalendar", fromMs, toMs);
         const failed = new AbortController();
         const signal = AbortSignal.any([AbortSignal.timeout(readTimeoutMs), failed.signal]);
-        const listed = await calendars(signal);
+        const listed = await calendarPages(CALENDARS_TOOL, {}, "page_token", calendarsFromData, signal);
         const read = [...(listed.some((calendar) => calendar.primary) ? [] : [PRIMARY_CALENDAR]), ...listed.filter((calendar) => calendar.read)];
         const perCalendar = await inParallel(read, CALENDAR_READS_AT_ONCE, async (calendar) => {
           try {
-            const data = await call(CALENDAR_LIST_TOOL, {
+            return await calendarPages(CALENDAR_LIST_TOOL, {
               calendarId: calendar.id, timeMin: new Date(fromMs).toISOString(), timeMax: new Date(toMs).toISOString(),
               singleEvents: true, orderBy: "startTime", maxResults: 100, showDeleted: true,
-            }, { signal });
-            return eventsFromData(data, { id: calendar.id, owned: calendar.owned });
+            }, "pageToken", (data) => eventsFromData(data, { id: calendar.id, owned: calendar.owned }), signal);
           } catch (error) {
             failed.abort();
             throw new SourceError("googlecalendar", `calendar ${calendar.name}: ${errorText(error)}`, error instanceof SourceError && error.severalAccounts);
