@@ -147,6 +147,20 @@ describe("CdpConnection", () => {
     await expect(event).rejects.toMatchObject({ code: "closed" });
     expect(connection.closed).toBe(true);
   });
+
+  it.each(["page", "browser"] as const)("reports a closed %s when an event wait starts after detach", async (kind) => {
+    const browser = fakeBrowser();
+    const connection = new CdpConnection(browser.transport);
+    browser.reply({ method: "Target.attachedToTarget", params: { sessionId: "gone", targetInfo: { targetId: "tab", type: "page" } } });
+    const session = kind === "page" ? connection.session("gone")! : connection.root;
+    if (kind === "page") browser.reply({ method: "Target.detachedFromTarget", params: { sessionId: "gone" } });
+    else browser.drop("browser exited");
+
+    await expect(session.waitFor("Page.loadEventFired")).rejects.toMatchObject({
+      name: "DriverError", code: "closed", message: expect.stringContaining(kind),
+    });
+    expect(browser.sent).toEqual([]);
+  });
 });
 
 describe("transports", () => {
