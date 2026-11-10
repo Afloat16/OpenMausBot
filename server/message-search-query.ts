@@ -1,5 +1,23 @@
 import type { DatabaseSync } from "node:sqlite";
 
+const searchConnections = new WeakSet<DatabaseSync>();
+
+function matchRange(text: string, needle: string): { start: number; end: number } | null {
+  const at = text.toLowerCase().indexOf(needle);
+  if (at < 0) return null;
+  let original = 0;
+  let folded = 0;
+  let start = 0;
+  for (const character of text) {
+    const next = folded + character.toLowerCase().length;
+    if (folded <= at && at < next) start = original;
+    if (folded < at + needle.length && at + needle.length <= next) return { start, end: original + character.length };
+    original += character.length;
+    folded = next;
+  }
+  return null;
+}
+
 export interface SearchHit {
   threadId: string;
   messageId: string;
@@ -15,12 +33,16 @@ export interface SearchHit {
 export function searchMessagesInDatabase(database: DatabaseSync, query: string, limit = 40, threadId?: string): SearchHit[] {
   const needle = query.trim().toLowerCase();
   if (!needle) return [];
+  if (!searchConnections.has(database)) {
+    database.function("search_lower", { deterministic: true }, value => typeof value === "string" ? value.toLowerCase() : null);
+    searchConnections.add(database);
+  }
   const pattern = `%${needle.replace(/([\\%_])/g, "\\$1")}%`;
   const scope = threadId ? "thread_id = ? AND " : "";
   const statement = database.prepare(
     "SELECT thread_id, id, at, role, kind, text, json_extract(json, '$.tool.name') AS tool_name, json_extract(json, '$.from.name') AS from_name FROM messages " +
-      `WHERE ${scope}((kind = 'text' AND text IS NOT NULL AND lower(text) LIKE ? ESCAPE '\\') ` +
-      "   OR (kind = 'activity' AND tool_name IS NOT NULL AND lower(tool_name) LIKE ? ESCAPE '\\')) " +
+      `WHERE ${scope}((kind = 'text' AND text IS NOT NULL AND search_lower(text) LIKE ? ESCAPE '\\') ` +
+      "   OR (kind = 'activity' AND tool_name IS NOT NULL AND search_lower(tool_name) LIKE ? ESCAPE '\\')) " +
       "ORDER BY at DESC LIMIT ?",
   );
   const rows = (threadId
@@ -37,14 +59,14 @@ export function searchMessagesInDatabase(database: DatabaseSync, query: string, 
   }>;
   return rows.map((row) => {
     const haystack = row.kind === "activity" ? (row.tool_name ?? "") : (row.text ?? "");
-    const hitAt = Math.max(0, haystack.toLowerCase().indexOf(needle));
-    const start = Math.max(0, hitAt - 60);
-    const end = Math.min(haystack.length, hitAt + needle.length + 90);
+    const hit = matchRange(haystack, needle) ?? { start: 0, end: 0 };
+    const start = Math.max(0, hit.start - 60);
+    const end = Math.min(haystack.length, hit.end + 90);
     const head = start > 0 ? "…" : "";
     const body = haystack.slice(start, end).replace(/\s+/g, " ").trim();
     const snippet = head + body + (end < haystack.length ? "…" : "");
     const folded = needle.replace(/\s+/g, " ");
-    const matchStart = snippet.toLowerCase().indexOf(folded);
+    const match = matchRange(snippet, folded);
     return {
       threadId: row.thread_id,
       messageId: row.id,
@@ -52,8 +74,8 @@ export function searchMessagesInDatabase(database: DatabaseSync, query: string, 
       role: row.role,
       kind: row.kind,
       snippet,
-      matchStart: matchStart < 0 ? head.length : matchStart,
-      matchLength: matchStart < 0 ? 0 : folded.length,
+      matchStart: match?.start ?? head.length,
+      matchLength: match ? match.end - match.start : 0,
       ...(row.from_name ? { from: row.from_name } : {}),
     };
   });
