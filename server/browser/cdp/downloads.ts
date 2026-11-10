@@ -31,13 +31,20 @@ export interface DownloadLimits {
 export const DOWNLOAD_LIMITS: DownloadLimits = { maxBytes: 1024 ** 3, perOwner: 20 };
 
 const UNSAFE_NAME = /[\p{Cc}<>:"/\\|?*]/gu;
+const DEVICE_NAME = /^(?:CON|PRN|AUX|NUL|COM[1-9¹²³]|LPT[1-9¹²³])(?:\.|$)/i;
 
 export function safeFileName(suggested: string): string {
   const base = suggested.split(/[\\/]/).pop() ?? "";
   const cleaned = base.replace(UNSAFE_NAME, "_").replace(/^[.\s]+|[.\s]+$/g, "");
-  let name = cleaned || "download";
-  while (Buffer.byteLength(name, "utf8") > 255) name = name.slice(0, -1);
-  return name;
+  const portable = DEVICE_NAME.test(cleaned) ? `_${cleaned}` : cleaned;
+  let name = "";
+  let bytes = 0;
+  for (const char of portable) {
+    bytes += Buffer.byteLength(char, "utf8");
+    if (bytes > 255) break;
+    name += char;
+  }
+  return name.replace(/[.\s]+$/g, "") || "download";
 }
 
 /** Downloads land as `<dir>/<id>/<name>`: Chrome writes `<dir>/<guid>` (allowAndName) and the finished file moves. */

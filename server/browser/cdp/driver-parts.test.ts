@@ -170,6 +170,24 @@ describe("small rules", () => {
     expect(Buffer.byteLength(safeFileName(`${"é".repeat(300)}.txt`))).toBeLessThanOrEqual(255);
   });
 
+  it.each(["CON", "nul.txt", "PRN.tar.gz", "AUX", "COM1.csv", "lpt9.pdf", "COM¹.txt", "LPT²"])("makes the Windows device name %s usable as a download", (name) => {
+    expect(safeFileName(name)).toBe(`_${name}`);
+  });
+
+  it("keeps Unicode characters whole at the filename byte limit", () => {
+    const name = safeFileName(`aaaa${"😀".repeat(63)}`);
+    expect(name).toBe(`aaaa${"😀".repeat(62)}`);
+    expect(Buffer.from(name, "utf8").toString("utf8")).toBe(name);
+    expect(Buffer.byteLength(name)).toBeLessThanOrEqual(255);
+  });
+
+  it("removes dots and spaces exposed by truncating a long filename", () => {
+    expect(safeFileName(`${"a".repeat(254)}.txt`)).toBe("a".repeat(254));
+    expect(safeFileName(`${"b".repeat(254)} report.pdf`)).toBe("b".repeat(254));
+    expect(safeFileName("COM10.txt")).toBe("COM10.txt");
+    expect(safeFileName("console.txt")).toBe("console.txt");
+  });
+
   it("reports addresses without their queries, and names human checks by their frames", () => {
     expect(reportableUrl("https://shop.example/api/cart?token=secret#x")).toBe("https://shop.example/api/cart");
     expect(reportableUrl("data:text/html,<p>hi")).toBe("data:…");
