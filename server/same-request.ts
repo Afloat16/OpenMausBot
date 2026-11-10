@@ -8,7 +8,7 @@
 export const SAME_REQUEST_MIN_CHARS = 40;
 
 /** Punctuation becomes a space, so "5-6 days" never reads as "56 days". */
-const words = (text: string) => text.toLowerCase().replace(/[^\p{L}\p{N}\s]+/gu, " ").replace(/\s+/g, " ").trim();
+const words = (text: string) => text.normalize("NFC").toLowerCase().match(/[\p{L}\p{N}][\p{L}\p{M}\p{N}]*/gu)?.join(" ") ?? "";
 
 export function sameRequest(a: string, b: string): boolean {
   const left = words(a);
