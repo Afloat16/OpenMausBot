@@ -16,6 +16,7 @@ export interface CalendarEvent {
   allDay: boolean;
   status: "confirmed" | "tentative" | "cancelled";
   selfDeclined: boolean;
+  transparency?: "opaque" | "transparent";
   attendees: Array<{ email: string; name?: string; self: boolean; organizer: boolean; response?: string }>;
   seriesId?: string;
   joinUrl?: string;
@@ -209,6 +210,7 @@ function calendarEvent(raw: unknown, calendar: { id: string; owned: boolean }): 
     allDay,
     status: item.status === "cancelled" || item.status === "tentative" ? item.status : "confirmed",
     selfDeclined: attendees.some((attendee) => attendee.self && attendee.response === "declined"),
+    ...(item.transparency === "opaque" || item.transparency === "transparent" ? { transparency: item.transparency } : {}),
     attendees,
     ...(typeof item.recurringEventId === "string" ? { seriesId: item.recurringEventId } : {}),
     ...(joinUrl ? { joinUrl: joinUrl.trim() } : {}),
