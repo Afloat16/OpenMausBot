@@ -270,7 +270,16 @@ export interface ReadMessage extends MessageSummary {
 
 /** A file name that stays inside the folder, from a name a stranger wrote. */
 export function safeAttachmentName(raw: string | undefined, index: number): string {
-  const name = basename((raw ?? "").replaceAll("\\", "/")).replace(/[^\p{L}\p{N}._ -]+/gu, "_").replace(/^[.\s]+/u, "").slice(-120).trim();
+  const clean = basename((raw ?? "").replaceAll("\\", "/")).replace(/[^\p{L}\p{N}._ -]+/gu, "_").replace(/^[.\s]+|[.\s]+$/gu, "");
+  let offset = clean.length;
+  let bytes = 0;
+  for (const character of Array.from(clean).reverse()) {
+    bytes += Buffer.byteLength(character);
+    if (bytes > 120) break;
+    offset -= character.length;
+  }
+  let name = clean.slice(offset).replace(/^[.\s]+|[.\s]+$/gu, "");
+  if (/^(?:con|prn|aux|nul|com[1-9¹²³]|lpt[1-9¹²³])(?:\.|$)/iu.test(name)) name = `_${name}`;
   return name || `attachment-${index + 1}`;
 }
 
