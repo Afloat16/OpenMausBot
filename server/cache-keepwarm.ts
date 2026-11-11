@@ -111,16 +111,17 @@ export function createCacheKeepWarm(deps: KeepWarmDeps) {
     if (deps.busy(w.target)) return retryLater(w, now);
     const controller = new AbortController();
     w.inflight = controller;
+    const target = w.target;
     let result: KeepWarmPingResult;
     try {
-      result = await deps.ping(w.target, controller.signal);
+      result = await deps.ping(target, controller.signal);
     } catch (error) {
       result = { ok: false, reason: `the ping failed: ${error instanceof Error ? error.message : String(error)}` };
     }
     if (w.inflight === controller) w.inflight = null;
     // Whatever happened to the window meanwhile, a ping that ran is booked.
     if (result.ok) {
-      try { deps.book(w.target, result); } catch {}
+      try { deps.book(target, result); } catch {}
     }
     if (disposed || windows.get(w.target.threadId) !== w || controller.signal.aborted) return;
     if (!result.ok) {
