@@ -16,14 +16,14 @@ const waited = (status: string, state: string, jobView: Rec, extra: Rec = {}) =>
   ...extra,
 });
 
-function harness(waits: Rec[], options: { jobRead?: () => unknown; delayMs?: number; drops?: unknown[] } = {}) {
+function harness(waits: Rec[], options: { jobRead?: () => unknown; delayMs?: number; drops?: unknown[]; send?: (signal?: AbortSignal) => Promise<Rec> } = {}) {
   const calls: Array<{ name: string; args: Rec }> = [];
   const requests: Array<{ path: string; method: string; body?: unknown }> = [];
   let wait = 0;
   const callTool = vi.fn(async (name: string, args: Rec, _fetcher: unknown, signal?: AbortSignal, hooks?: { onProgress?(job: Rec): void }) => {
     calls.push({ name, args });
     if (name === "create_task") return { success: true, task: { taskId: "t1" } };
-    if (name === "send_bot_message") return { success: true, botId: "lead", taskId: "t1", messageId: "m1", at: 5 };
+    if (name === "send_bot_message") return options.send ? options.send(signal) : { success: true, botId: "lead", taskId: "t1", messageId: "m1", at: 5 };
     if (name === "interrupt_conversation") return { success: true, targetType: "bot", targetId: "lead", taskId: "t1" };
     if (name === "wait_for_conversation") {
       if (options.drops?.length) throw options.drops.shift();
@@ -56,6 +56,44 @@ function harness(waits: Rec[], options: { jobRead?: () => unknown; delayMs?: num
 }
 
 describe("run", () => {
+  it("does not send when Ctrl-C arrives during the preceding job read", async () => {
+    const controller = new AbortController();
+    const h = harness([], { jobRead: () => {
+      controller.abort();
+      return job("idle", "v0", { now: 1_000 });
+    } });
+    const { code, result } = await h.run(["run", "--bot", "lead", "Go", "--wait", "none", "--json"], controller.signal);
+    expect(code).toBe(130);
+    expect(result.error).toBe("stopped sending; any accepted work keeps running");
+    expect(result.hint).toContain("--thread t1 --since 1000");
+    expect(h.calls.filter((call) => call.name === "send_bot_message")).toHaveLength(0);
+  });
+
+  it("passes cancellation to the send and does not retry a failed send after Ctrl-C", async () => {
+    const controller = new AbortController();
+    const send = vi.fn(async (_signal?: AbortSignal) => {
+      controller.abort();
+      throw Object.assign(new Error("temporarily unavailable"), { status: 503 });
+    });
+    const h = harness([], { send });
+    const { code } = await h.run(["run", "--bot", "lead", "Go", "--wait", "none", "--json"], controller.signal);
+    expect(code).toBe(130);
+    expect(send).toHaveBeenCalledExactlyOnceWith(controller.signal);
+    expect(h.calls.some((call) => call.name === "interrupt_conversation")).toBe(false);
+  });
+
+  it("still retries a transient send with the same send id when it is not cancelled", async () => {
+    const sent = { success: true, taskId: "t1", messageId: "m1" };
+    const send = vi.fn().mockRejectedValueOnce(Object.assign(new Error("temporarily unavailable"), { status: 503 }))
+      .mockResolvedValueOnce(sent);
+    const h = harness([], { send });
+    const { code } = await h.run(["run", "--bot", "lead", "Go", "--wait", "none", "--json"]);
+    expect(code).toBe(0);
+    const sends = h.calls.filter((call) => call.name === "send_bot_message");
+    expect(sends).toHaveLength(2);
+    expect(sends[1]!.args).toEqual(sends[0]!.args);
+  });
+
   it("opens a conversation, pins the job to the server's clock, sends once with a send id, and waits for the whole job", async () => {
     const h = harness([waited("settled", "completed", job("completed", "v2", { nodes: [{ id: "root", status: "completed" }] }))]);
     const { code, result, progress } = await h.run(["run", "Room Lead", "Rehearse the launch\nof example.com", "--json"]);

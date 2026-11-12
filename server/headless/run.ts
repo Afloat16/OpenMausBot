@@ -158,8 +158,8 @@ function report(waited: Waited, threadId: string, extra: Rec = {}): { result: Re
   };
 }
 
-const interrupted = (watching: Watching): HeadlessError =>
-  new HeadlessError("stopped waiting; the work keeps running", EXIT.interrupted,
+const interrupted = (watching: Watching, message = "stopped waiting; the work keeps running"): HeadlessError =>
+  new HeadlessError(message, EXIT.interrupted,
     watching.threadId ? `wait again: ${waitAgain(watching)}` : "openmausbot wait TARGET picks it up again");
 
 export async function runVerb(ctx: VerbContext): Promise<VerbOutcome> {
@@ -178,15 +178,23 @@ export async function runVerb(ctx: VerbContext): Promise<VerbOutcome> {
   const sendId = flag(ctx.flags, "send-id") ?? newSendId();
   const tool = target.type === "bot" ? "send_bot_message" : "send_channel_message";
   const args = { [`${target.type}_id`]: target.id, task_id: threadId, text, send_id: sendId };
+  const watching: Watching = { threadId, since };
   let sent: Rec | undefined;
-  for (let attempt = 1; !sent; attempt++) {
-    try {
-      sent = await client.tool(tool, args);
-    } catch (error) {
-      // The same send id makes a retry land on the first send, never beside it.
-      if (!passing(error) || attempt >= 3) throw error;
-      await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
+  try {
+    for (let attempt = 1; !sent; attempt++) {
+      ctx.signal.throwIfAborted();
+      try {
+        sent = await client.tool(tool, args, undefined, ctx.signal);
+        ctx.signal.throwIfAborted();
+      } catch (error) {
+        // The same send id makes a retry land on the first send, never beside it.
+        if (ctx.signal.aborted || !passing(error) || attempt >= 3) throw error;
+        await pause(500 * attempt, ctx.signal);
+      }
     }
+  } catch (error) {
+    if (ctx.signal.aborted) throw interrupted(watching, "stopped sending; any accepted work keeps running");
+    throw error;
   }
   ctx.output.progress({ event: "started", threadId, target: { type: target.type, id: target.id, ...(target.name ? { name: target.name } : {}) },
     sendId, ...(sent.messageId ? { messageId: sent.messageId } : {}), ...(sent.queued ? { queued: true } : {}), since });
@@ -198,7 +206,6 @@ export async function runVerb(ctx: VerbContext): Promise<VerbOutcome> {
     };
   }
   let waited: Waited;
-  const watching: Watching = { threadId, since };
   try {
     waited = await waitOnJob(ctx, client, target, { scope: mode }, watching);
   } catch (error) {
