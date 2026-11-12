@@ -177,6 +177,39 @@ describe("ACP decodeConfig", () => {
       await instance.dispose();
     }
   });
+  it.each(["empty", "error"] as const)("marks a previously confirmed catalog unconfirmed after an %s refresh and recovers", async (failure) => {
+    let fail = false;
+    const offered = { default: "account", options: [{ id: "account", label: "Account" }] };
+    const support: AcpSupport = {
+      driverKind: "refresh-state-test", displayName: "Refresh State Test",
+      models: { default: "fixed", options: [{ id: "fixed", label: "Fixed" }] },
+      defaultCli: FAKE_CLI, nativeSource: "refresh-state-test.acp", loginNote: "not authenticated",
+      spawnArgs: () => [], pickAuthMethod: () => null, authFailure: "continue", isAuthenticated: () => true,
+      resolveModelsOnCreate: false,
+      resolveModels: () => {
+        if (fail && failure === "error") throw new Error("catalog unavailable");
+        return fail ? { default: "", options: [] } : structuredClone(offered);
+      },
+    };
+    const driver = createAcpDriver(support);
+    const instance = await driver.create({ instanceId: `refresh-state-${randomUUID()}`, displayName: "Refresh State Test",
+      environment: {}, enabled: true, config: driver.defaultConfig() });
+    try {
+      await instance.refreshModels!();
+      expect(instance.modelsUnconfirmed).toBe(false);
+      fail = true;
+      await instance.refreshModels!();
+      expect(instance.models).toEqual(offered);
+      expect(instance.modelsUnconfirmed).toBe(true);
+      fail = false;
+      await instance.refreshModels!();
+      expect(instance.models).toEqual(offered);
+      expect(instance.modelsUnconfirmed).toBe(false);
+    } finally {
+      await instance.dispose();
+    }
+  });
+
   it("grok defaults to the grok binary", () => {
     expect(GrokAgentDriver.decodeConfig({})).toEqual({ cli: "grok", fullAuto: false, workspace: undefined });
   });

@@ -32,8 +32,11 @@ export function acpModelCatalog(input: {
         models = resolved;
         readFromEngine = true;
         accountModels = idsOf(resolved);
-      } else unconfirmedModelCatalog(models);
-    } catch { unconfirmedModelCatalog(models); }
+      } else {
+        readFromEngine = false;
+        unconfirmedModelCatalog(models);
+      }
+    } catch { readFromEngine = false; unconfirmedModelCatalog(models); }
     try { writeStartupModelCache(instanceId, models); } catch {}
   };
 
