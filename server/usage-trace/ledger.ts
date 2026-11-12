@@ -3,7 +3,6 @@
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { join } from "node:path";
-import { createInterface } from "node:readline";
 import { isUsageRow, monthsBetween, type UsageRow } from "../usage-ledger.ts";
 
 interface CachedMonth {
@@ -20,13 +19,12 @@ async function readFrom(file: string, start: number, into: UsageRow[]): Promise<
   let consumed = start;
   // A line that does not parse is counted only once another follows it: the last one may still be mid-append.
   let unparsed = 0;
-  for await (const line of createInterface({ input: stream, crlfDelay: Infinity })) {
+  const accept = (line: string, bytes: number) => {
     consumed += unparsed;
     unparsed = 0;
-    const bytes = Buffer.byteLength(line) + 1;
     if (!line) {
       consumed += bytes;
-      continue;
+      return;
     }
     try {
       const value: unknown = JSON.parse(line);
@@ -35,7 +33,22 @@ async function readFrom(file: string, start: number, into: UsageRow[]): Promise<
     } catch {
       unparsed = bytes;
     }
+  };
+  // readline removes the terminator; assuming one byte for it rewinds the cache into already-booked CRLF records.
+  let pending = "";
+  for await (const chunk of stream) {
+    pending += chunk;
+    let cursor = 0;
+    for (const ending of pending.matchAll(/\r\n|\r|\n/g)) {
+      // Keep a final CR until its possible LF arrives in the next chunk.
+      if (ending[0] === "\r" && ending.index === pending.length - 1) break;
+      const line = pending.slice(cursor, ending.index);
+      accept(line, Buffer.byteLength(line) + ending[0].length);
+      cursor = ending.index + ending[0].length;
+    }
+    pending = pending.slice(cursor);
   }
+  if (pending) accept(pending.endsWith("\r") ? pending.slice(0, -1) : pending, Buffer.byteLength(pending));
   return Math.min(consumed, start + stream.bytesRead);
 }
 
