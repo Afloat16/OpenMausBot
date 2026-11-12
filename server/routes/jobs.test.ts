@@ -143,6 +143,28 @@ describe("GET /api/threads/:id/job", () => {
     expect((await held).body).toMatchObject({ state: "completed" });
   });
 
+  it("wakes a held read when a bot is renamed without a job status change", async () => {
+    const f = fixture();
+    f.rows = [f.root({ status: "completed" })];
+    const base = await serve(f);
+    const first = (await get(base, `/api/threads/${f.threadId}/job?since=0`)).body;
+    const controller = new AbortController();
+    const held = fetch(`${base}/api/threads/${f.threadId}/job?since=0&wait=20000&version=${first.version}`, { signal: controller.signal });
+    try {
+      await expect.poll(() => f.subscribers()).toBe(1);
+      f.store.patchBot(f.botId, { name: "Renamed Lead" });
+      await expect.poll(() => f.subscribers(), { timeout: 2_000 }).toBe(0);
+      const response = await held;
+      const next = await response.json() as any;
+      expect(next).toMatchObject({ state: "completed", reason: "Renamed Lead finished" });
+      expect(next.nodes[0].botName).toBe("Renamed Lead");
+      expect(next.version).not.toBe(first.version);
+    } finally {
+      controller.abort();
+      await held.catch(() => undefined);
+    }
+  });
+
   it("answers a held read whose last look fails with that failure, instead of throwing from its timer and never answering", async () => {
     const f = fixture();
     f.rows = [f.root()];

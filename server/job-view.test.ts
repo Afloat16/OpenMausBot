@@ -105,6 +105,38 @@ describe("the job of a conversation", () => {
     expect(view(rows, { conversation: { ...idle, queued: 1 } }).version).not.toBe(before);
   });
 
+  it.each([
+    ["bot names", { nameOf: () => "Renamed teammate" }],
+    ["conversation titles", { titleOf: () => "Renamed conversation" }],
+    ["visible nodes", { visible: (threadId: string) => threadId !== "priya-work" }],
+  ] as const)("changes its version when %s change without a runtime transition", (_label, patch) => {
+    const rows = [root({ status: "completed" }), child("a1", "priya", { status: "completed" })];
+    const before = view(rows);
+    const after = view(rows, patch);
+    expect(after.nodes).not.toEqual(before.nodes);
+    expect(after.version).not.toBe(before.version);
+  });
+
+  it.each([
+    ["result", { result: "Corrected report" }],
+    ["outcome detail", { outcomeDetail: "The provider supplied more detail" }],
+    ["finish time", { finishedAt: 8_000 }],
+  ] as const)("changes its version when a reported %s changes", (_label, patch) => {
+    const row = root({ status: "failed", outcome: "provider_error", result: "Earlier report" });
+    const before = view([row]);
+    const after = view([{ ...row, ...patch }]);
+    expect(after.nodes).not.toEqual(before.nodes);
+    expect(after.version).not.toBe(before.version);
+  });
+
+  it("versions full results while ignoring clipped tails and unreported activity", () => {
+    const row = root({ status: "completed", result: `${"x".repeat(280)}earlier` });
+    const changed = { ...row, result: `${"x".repeat(280)}later` };
+    expect(view([changed]).version).toBe(view([row]).version);
+    expect(view([changed], { full: true }).version).not.toBe(view([row], { full: true }).version);
+    expect(view([{ ...row, lastActivityAt: 50_000 }]).version).toBe(view([row]).version);
+  });
+
   it("counts what the reader may not see without listing it, and clips results unless asked for them whole", () => {
     const long = "x".repeat(2_000);
     const rows = [root({ status: "completed", result: long }), child("a1", "priya", { status: "completed", result: "secret room" })];
