@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, unlinkSync } from "node:fs";
+import { closeSync, constants, existsSync, fstatSync, lstatSync, mkdirSync, openSync, readdirSync, readFileSync, realpathSync, unlinkSync } from "node:fs";
 import { dirname, join, sep } from "node:path";
 
 import { writeFileAtomic } from "./atomic.ts";
@@ -92,9 +92,11 @@ export function resolveMemoryPath(botId: string, path: string): string {
     throw new MemoryStoreError("path", 400, `memory path escapes the workspace: ${JSON.stringify(path)}`);
   }
   try {
-    if (lstatSync(absolute).isSymbolicLink()) {
+    const info = lstatSync(absolute);
+    if (info.isSymbolicLink()) {
       throw new MemoryStoreError("path", 400, `memory file is a link, not a file: ${JSON.stringify(path)}`);
     }
+    if (!info.isFile()) throw new MemoryStoreError("path", 400, `not a regular memory file: ${JSON.stringify(path)}`);
   } catch (error) {
     if (error instanceof MemoryStoreError) throw error;
   }
@@ -182,7 +184,7 @@ export function memoryOverview(botId: string): MemoryOverview {
   const root = workspaceDir(botId);
   let raw = "";
   try {
-    raw = readFileSync(resolveMemoryPath(botId, MEMORY_INDEX), "utf8");
+    raw = readMemoryDoc(botId, MEMORY_INDEX).text;
   } catch (error) {
     if (error instanceof MemoryStoreError) throw error;
     raw = "";
@@ -205,12 +207,19 @@ export interface MemoryDoc {
 
 export function readMemoryDoc(botId: string, path: string): MemoryDoc {
   const absolute = resolveMemoryPath(botId, path);
+  let descriptor: number | undefined;
   try {
-    const text = readFileSync(absolute, "utf8");
+    // A bot can replace the checked path before open: never wait for a FIFO's writer, and inspect the opened inode.
+    const flags = constants.O_RDONLY | (process.platform === "win32" ? 0 : constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    descriptor = openSync(absolute, flags);
+    if (!fstatSync(descriptor).isFile()) throw new MemoryStoreError("path", 400, `not a regular memory file: ${JSON.stringify(path)}`);
+    const text = readFileSync(descriptor, "utf8");
     return { path, text, hash: hashMemoryText(text), exists: true };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     return { path, text: "", hash: hashMemoryText(""), exists: false };
+  } finally {
+    if (descriptor !== undefined) closeSync(descriptor);
   }
 }
 
