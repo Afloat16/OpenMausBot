@@ -148,8 +148,9 @@ export function learnedState(): { learned: LearnedFact[]; removed: string[] } {
 }
 
 /** Another server's learned facts and removals: each fact neither removed here nor already in About me is added to it
- * once, and its removals are remembered here too. Null when About me has no room for them. */
-export function adoptLearned(facts: readonly LearnedFact[], removed: readonly string[], aboutMe: string): { aboutMe: string; added: number } | null {
+ * once, and its removals are remembered here too. Save About me before the ledger so a failed save remains retryable.
+ * Null when About me has no room for them. */
+export function adoptLearned(facts: readonly LearnedFact[], removed: readonly string[], aboutMe: string, saveAboutMe?: (text: string) => void): { aboutMe: string; added: number } | null {
   const file = load();
   const tombstones = new Set([...file.removed, ...removed]);
   const known = new Set([...file.learned.map((fact) => factIdentity(fact.text)), ...aboutMe.split("\n").map(lineIdentity)]);
@@ -163,6 +164,7 @@ export function adoptLearned(facts: readonly LearnedFact[], removed: readonly st
   }
   const next = appendAboutMe(aboutMe, lines);
   if (next === null) return null;
+  if (next !== aboutMe) saveAboutMe?.(next);
   const removals = [...new Set([...file.removed, ...removed])].slice(-MAX_REMOVED);
   if (kept.length || removals.length !== file.removed.length) save({ ...file, learned: [...file.learned, ...kept].slice(-MAX_KEPT), removed: removals });
   return { aboutMe: next, added: lines.length };

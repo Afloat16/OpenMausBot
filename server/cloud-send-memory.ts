@@ -123,9 +123,9 @@ async function merge(deps: MoveMemoryDeps, body: z.infer<typeof mergeSchema>) {
     out.journal = await adoptMemoryJournal(body.bot, (body.journal ?? []) as unknown as MemoryJournalEntry[]);
   }
   if (body.about) {
-    const adopted = adoptLearned(body.about.learned as LearnedFact[], body.about.removed, deps.aboutMe());
+    const adopted = adoptLearned(body.about.learned as LearnedFact[], body.about.removed, deps.aboutMe(), (text) => deps.saveAboutMe(text));
     if (!adopted) out.failed.push("about-me");
-    else if (adopted.added) { deps.saveAboutMe(adopted.aboutMe); out.about = adopted.added; }
+    else out.about = adopted.added;
   }
   for (const team of body.teams ?? []) {
     const section = sectionContextKey(team.section);
