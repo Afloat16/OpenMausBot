@@ -15,6 +15,7 @@ import { runHeadless } from "./main.ts";
 const dir = mkdtempSync(join(tmpdir(), "omb-export-"));
 let server: Server;
 let origin: string;
+let jobStatus = 200;
 
 const LEAD = "lead-thread-0001";
 const PRIYA = "priya-thread-0002";
@@ -39,6 +40,7 @@ function answer(req: IncomingMessage, res: ServerResponse, raw: string) {
   };
   if (url.pathname === "/api/bots") return send(200, { bots: [{ id: "lead", name: "Room Lead", threadId: LEAD, tasks: [{ threadId: LEAD }] }], groups: [] });
   if (url.pathname === `/api/threads/${LEAD}/job`) {
+    if (jobStatus !== 200) return send(jobStatus, { error: "job temporarily unavailable" });
     return send(200, { threadId: LEAD, state: "completed", reason: "Room Lead finished", since: 0, version: "v1", nodes: [
       { id: "r1", rootId: "r1", botName: "Room Lead", threadId: LEAD, status: "completed", result: "Report" },
       { id: "a1", rootId: "r1", botName: "Priya", threadId: PRIYA, threadTitle: "Visit", status: "completed", result: `Saw ${KEY}` },
@@ -172,6 +174,33 @@ describe("export", () => {
     writeFileSync(join(out, "manifest.json"), JSON.stringify({ ...manifest, files: [...manifest.files, { file: "../outside.txt" }, { file: join(dir, "outside.txt") }] }));
     expect((await run(["export", "--thread", LEAD, "--out", out, "--force", "--json"])).code).toBe(0);
     expect(readFileSync(join(dir, "outside.txt"), "utf8")).toBe("not the export's");
+  });
+
+  it.each([
+    { name: "missing root", status: 200, args: ["--root", "missing-root"], code: 2 },
+    { name: "server failure", status: 503, args: [], code: 1 },
+    { name: "expired credential", status: 401, args: [], code: 5 },
+  ])("preserves the earlier export when --force cannot read the requested job: $name", async ({ name, status, args, code }) => {
+    const out = join(dir, `preflight-${name}`);
+    expect((await run(["export", "--thread", LEAD, "--out", out, "--json"])).code).toBe(0);
+    const manifest = JSON.parse(readFileSync(join(out, "manifest.json"), "utf8"));
+    const paths = ["job.json", "manifest.json",
+      ...manifest.transcripts.flatMap((entry: { file: string }) => [entry.file, entry.file.replace(/\.json$/, ".md")]),
+      ...manifest.files.map((entry: { file: string }) => entry.file),
+      ...manifest.screens.map((entry: { file: string }) => entry.file)];
+    const before = new Map(paths.map((file: string) => [file, readFileSync(join(out, file))]));
+    jobStatus = status;
+    try {
+      const refused = await run(["export", "--thread", LEAD, "--out", out, "--force", ...args, "--json"]);
+      expect(refused.code).toBe(code);
+      expect(refused.result.ok).toBe(false);
+    } finally {
+      jobStatus = 200;
+    }
+    for (const [file, contents] of before) {
+      expect(existsSync(join(out, file)), file).toBe(true);
+      expect(readFileSync(join(out, file)), file).toEqual(contents);
+    }
   });
 
   it("writes each transcript's .md from the same messages as its .json: the latest 2,000, secrets removed", async () => {
