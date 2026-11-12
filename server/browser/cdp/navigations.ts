@@ -42,12 +42,14 @@ export class Navigations {
   /** After an action: lets the page's own queued tasks run, and when the page asked for a navigation since `mark`, waits
    * (at most `timeoutMs`) until the tab has a new document with its DOM, moved within this one, or stopped loading. */
   async follow(mark: NavigationMark, timeoutMs: number): Promise<void> {
+    if (this.#session.detached) return;
     const deadline = Date.now() + timeoutMs;
     // A navigation the browser already started holds this until the next document commits; that ends it too. Never
     // stopped past its time: that would stop the page's own scripts.
     const yieldMs = Math.max(1, Math.min(2_000, deadline - Date.now()));
     await this.#frames.inWorld(this.#frames.mainFrameId, (session, contextId) =>
       session.send("Runtime.evaluate", { expression: AFTER_PAGE_TASKS, contextId, awaitPromise: true, returnByValue: true }, { timeoutMs: yieldMs })).catch(() => {});
+    if (this.#session.detached) return;
     if (this.#requested === mark.requested && this.#lifecycle.loaderId === mark.loaderId) return;
     const moved = () => this.#lifecycle.loaderId !== mark.loaderId || this.#withinDocument !== mark.withinDocument || this.#stopped !== mark.stopped;
     if (!moved()) {
@@ -55,6 +57,7 @@ export class Navigations {
         const check = () => queueMicrotask(() => { if (moved()) finish(); });
         const offs = ["Page.frameNavigated", "Page.navigatedWithinDocument", "Page.frameStoppedLoading"].map((event) => this.#session.on(event, check));
         const timer = setTimeout(finish, Math.max(0, deadline - Date.now()));
+        offs.push(this.#session.onDetach(finish));
         function finish() {
           for (const off of offs) off();
           clearTimeout(timer);

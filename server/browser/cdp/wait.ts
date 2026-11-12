@@ -18,7 +18,18 @@ const POLL_MS = 100;
 
 const EVENT_FOR: Readonly<Record<LoadState, string>> = { load: "load", domcontentloaded: "DOMContentLoaded", networkidle: "networkIdle" };
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const closedPageError = () => new DriverError("closed", "The page closed while waiting.");
+
+function sleep(ms: number, session: CdpSession): Promise<void> {
+  if (session.detached) return Promise.reject(closedPageError());
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => { off(); resolve(); }, ms);
+    const off = session.onDetach(() => {
+      clearTimeout(timer);
+      reject(closedPageError());
+    });
+  });
+}
 
 /** The main frame's current document and the lifecycle events it has reached. */
 export class Lifecycle {
@@ -26,6 +37,7 @@ export class Lifecycle {
   readonly #listeners = new Set<() => void>();
   #loaderId: string | null = null;
   #reached = new Set<string>();
+  #closed = false;
 
   constructor(session: CdpSession, mainFrameId: string) {
     this.#mainFrameId = mainFrameId;
@@ -38,6 +50,7 @@ export class Lifecycle {
       if (params.type === "BackForwardCacheRestore") for (const name of Object.values(EVENT_FOR)) this.#reached.add(name);
       this.#notify();
     });
+    session.onDetach(() => { this.#closed = true; this.#notify(); });
   }
 
   get loaderId(): string | null {
@@ -50,14 +63,16 @@ export class Lifecycle {
 
   /** Waits for `state` in the document `loaderId` (by default whichever document is current). */
   waitFor(state: LoadState, { loaderId, timeoutMs }: { loaderId?: string; timeoutMs: number }): Promise<void> {
+    if (this.#closed) return Promise.reject(closedPageError());
     const done = () => this.reached(state, loaderId ?? this.#loaderId);
     if (done()) return Promise.resolve();
     return new Promise((resolve, reject) => {
       const listener = () => {
-        if (!done()) return;
+        if (!this.#closed && !done()) return;
         this.#listeners.delete(listener);
         clearTimeout(timer);
-        resolve();
+        if (this.#closed) reject(closedPageError());
+        else resolve();
       };
       this.#listeners.add(listener);
       const timer = setTimeout(() => {
@@ -69,13 +84,15 @@ export class Lifecycle {
 
   /** The id of the next document the main frame commits. */
   nextDocument(timeoutMs: number): Promise<string> {
+    if (this.#closed) return Promise.reject(closedPageError());
     const before = this.#loaderId;
     return new Promise((resolve, reject) => {
       const listener = () => {
-        if (this.#loaderId === null || this.#loaderId === before) return;
+        if (!this.#closed && (this.#loaderId === null || this.#loaderId === before)) return;
         this.#listeners.delete(listener);
         clearTimeout(timer);
-        resolve(this.#loaderId);
+        if (this.#closed) reject(closedPageError());
+        else resolve(this.#loaderId!);
       };
       this.#listeners.add(listener);
       const timer = setTimeout(() => {
@@ -154,6 +171,8 @@ async function elementPresent(context: WaitContext, target: { ref?: string; sele
 
 /** Every condition at once, checked every 100 ms; a navigation in between counts as not yet. */
 export async function waitFor(context: WaitContext, conditions: WaitConditions): Promise<void> {
+  const assertOpen = () => { if (context.frames.mainSession.detached) throw closedPageError(); };
+  assertOpen();
   const timeoutMs = Math.min(Math.max(0, conditions.timeoutMs ?? DEFAULT_WAIT_MS), MAX_WAIT_MS);
   const started = Date.now();
   const checks: Array<() => Promise<boolean>> = [];
@@ -170,13 +189,15 @@ export async function waitFor(context: WaitContext, conditions: WaitConditions):
   if (conditions.ms !== undefined) {
     const ms = Math.min(Math.max(0, conditions.ms), MAX_WAIT_MS);
     if (ms > timeoutMs && checks.length) throw new DriverError("refused", `The wait of ${ms} ms is longer than its ${timeoutMs} ms timeout.`);
-    await sleep(ms);
+    await sleep(ms, context.frames.mainSession);
   }
   if (!checks.length) return;
   for (;;) {
+    assertOpen();
     const results = await Promise.all(checks.map((check) => check()));
+    assertOpen();
     if (results.every(Boolean)) return;
     if (Date.now() - started >= timeoutMs) throw new DriverError("timeout", `Waited ${timeoutMs}ms without every condition holding.`);
-    await sleep(POLL_MS);
+    await sleep(POLL_MS, context.frames.mainSession);
   }
 }
