@@ -134,6 +134,42 @@ describe("WebhookRequestService", () => {
     expect(webhooks.list()[0]!.enabled).toBe(false);
   });
 
+  it.each([
+    { action: "pause", enabled: false, verificationPending: false },
+    { action: "pause", enabled: true, verificationPending: false },
+    { action: "resume", enabled: false, verificationPending: false },
+    { action: "resume", enabled: true, verificationPending: false },
+    { action: "pause", enabled: false, verificationPending: true },
+    { action: "resume", enabled: false, verificationPending: true },
+  ] as const)("undoes $action back to enabled=$enabled and verificationPending=$verificationPending", ({ action, enabled, verificationPending }) => {
+    const { service, webhooks, store, dir, tick } = harness();
+    const created = webhooks.create({ name: "Incoming lead", prompt: "Prepare a response", botId: "bot-a", enabled, verificationPending });
+    tick();
+    const applied = service.submit({ botId: "bot-a", threadId: "thread-a", operation: { action, webhookId: created.webhook.id } });
+    const receipt = JSON.parse(JSON.stringify(store.messagesFor("thread-a")));
+    const reloadedStore = new MemoryStore();
+    reloadedStore.threads.set("thread-a", receipt);
+    const reloadedWebhooks = new WebhookManager({ file: join(dir, "webhooks.json"), botState: () => "ready", enqueue: () => ({ id: "unused" }) });
+    const reloaded = new WebhookRequestService({ store: reloadedStore, webhooks: reloadedWebhooks, botName: () => "Support" });
+
+    expect(reloaded.undo({ botId: "bot-a", threadId: "thread-a", requestId: applied.requestId })).toMatchObject({ state: "undone" });
+    expect(reloadedWebhooks.list()[0]).toMatchObject({ enabled, verificationPending });
+    expect(JSON.parse(readFileSync(join(dir, "webhooks.json"), "utf8")).webhooks[0]).toMatchObject({ enabled, verificationPending });
+  });
+
+  it.each(["pause", "resume"] as const)("keeps legacy %s receipts undoable without a state snapshot", (action) => {
+    const { service, webhooks, store, tick } = harness();
+    const enabled = action === "pause";
+    const created = webhooks.create({ name: "Legacy trigger", prompt: "Prepare a response", botId: "bot-a", enabled });
+    tick();
+    const applied = service.submit({ botId: "bot-a", threadId: "thread-a", operation: { action, webhookId: created.webhook.id } });
+    const receipt = store.messagesFor("thread-a")[0]!.card!.webhookRequest!;
+    delete receipt.undo!.before;
+
+    expect(service.undo({ botId: "bot-a", threadId: "thread-a", requestId: applied.requestId })).toMatchObject({ state: "undone" });
+    expect(webhooks.list()[0]!.enabled).toBe(enabled);
+  });
+
   it("runs a webhook once with a test call, which cannot be undone", () => {
     const { service, queued } = harness();
     const created = service.submit({ botId: "bot-a", threadId: "thread-a", operation: create });

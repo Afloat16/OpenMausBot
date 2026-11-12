@@ -19,6 +19,7 @@ export type WebhookRequestOperation =
 /** The webhook as it stood before an update, so Undo can restore it. */
 export interface WebhookRequestSnapshot extends WebhookRequestDefinition {
   enabled: boolean;
+  verificationPending?: boolean;
 }
 
 export interface WebhookRequestUndo {

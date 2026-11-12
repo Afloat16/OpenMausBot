@@ -111,6 +111,17 @@ it("sets up schedule and webhook triggers from chat at Ask, with no confirmation
     expect((await api("GET", "/api/routines")).routines.find((routine: any) => routine.id === routineId).enabled).toBe(false);
     expect(await unanswered()).toEqual([]);
 
+    for (const [action, enabled] of [["resume", true], ["pause", false]] as const) {
+      await api("PATCH", `/api/webhooks/${webhookId}`, { enabled });
+      const repeated = await turn(`Keep the webhook ${enabled ? "running" : "paused"}.`, [
+        { tool: "manage_trigger", arguments: { trigger_id: webhookId, action } },
+      ]);
+      expect(toolText(repeated, "manage_trigger")).toContain("applied at once");
+      const receipt = (await messages()).findLast((message) => message.card?.webhookRequest)!.card;
+      await api("POST", `/api/threads/${threadId}/undo`, { requestId: receipt.requestId });
+      expect((await api("GET", "/api/webhooks")).webhooks.find((candidate: any) => candidate.id === webhookId).enabled).toBe(enabled);
+    }
+
     // 6. Undo on the webhook's card removes it, and its link stops working.
     await api("POST", `/api/threads/${threadId}/undo`, { requestId: webhookCard.requestId });
     expect((await api("GET", "/api/webhooks")).webhooks.some((candidate: any) => candidate.id === webhookId)).toBe(false);

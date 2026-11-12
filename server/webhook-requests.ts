@@ -80,6 +80,7 @@ function snapshot(webhook: WebhookTrigger): WebhookRequestSnapshot {
     instructions: webhook.prompt,
     runOn: webhook.runOn,
     enabled: webhook.enabled,
+    ...(webhook.verificationPending !== undefined ? { verificationPending: webhook.verificationPending } : {}),
     ...(webhook.eventTypes?.length ? { eventTypes: [...webhook.eventTypes] } : {}),
   };
 }
@@ -193,7 +194,7 @@ export class WebhookRequestService {
       undo: {
         name: redactSecretsInText(subject.name),
         ...(after && operation.action !== "run_now" ? { appliedUpdatedAt: after.updatedAt } : {}),
-        ...(before && (operation.action === "update" || operation.action === "delete") ? { before: snapshot(before) } : {}),
+        ...(before && operation.action !== "run_now" ? { before: snapshot(before) } : {}),
       },
     };
     const message = this.options.store.appendMessage(args.threadId, {
@@ -242,9 +243,13 @@ export class WebhookRequestService {
         case "resume": {
           const before = payload.undo?.before;
           if (!current || current.updatedAt !== payload.undo?.appliedUpdatedAt) return stale;
+          const previousState = {
+            enabled: before?.enabled ?? operation.action === "pause",
+            ...(before?.verificationPending !== undefined ? { verificationPending: before.verificationPending } : {}),
+          };
           const patch = operation.action === "update"
-            ? before ? { ...managerInput(before), eventTypes: before.eventTypes ?? [], enabled: before.enabled } : undefined
-            : { enabled: operation.action === "pause" };
+            ? before ? { ...managerInput(before), eventTypes: before.eventTypes ?? [], ...previousState } : undefined
+            : previousState;
           if (!patch || !webhooks.update(webhookId, patch)) return stale;
           break;
         }
