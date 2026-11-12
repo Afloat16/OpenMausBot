@@ -2,6 +2,7 @@
 // folder is a fresh temporary one.
 import { randomBytes } from "node:crypto";
 import { closeSync, existsSync, mkdirSync, mkdtempSync, openSync, readdirSync, readFileSync, rmSync, statSync, symlinkSync, truncateSync, writeFileSync, writeSync } from "node:fs";
+import { open, type FileHandle } from "node:fs/promises";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -152,7 +153,87 @@ const to = (fromPath: string, path: string, cfg = own) => files.copyToComputer(c
 const sandboxCalls = () => calls.filter(call => call.path.startsWith("/sandbox/"));
 const boatCalls = () => calls.filter(call => !call.path.startsWith("/sandbox/"));
 
+async function boundDiskWrites(options: { stopAfter?: number; code?: string; abort?: AbortController } = {}) {
+  const probe = await open(join(root, "write-probe"), "w");
+  const prototype = Object.getPrototypeOf(probe) as FileHandle;
+  await probe.close();
+  let count = 0;
+  const spy = vi.spyOn(prototype, "write");
+  spy.mockImplementation((async function (this: FileHandle, buffer: Uint8Array) {
+    count++;
+    if (count > (options.stopAfter ?? Infinity)) {
+      if (options.code) throw Object.assign(new Error("synthetic disk failure"), { code: options.code });
+      return { bytesWritten: 0, buffer };
+    }
+    const bytesWritten = writeSync(this.fd, buffer, 0, Math.min(buffer.byteLength, 997));
+    options.abort?.abort();
+    return { bytesWritten, buffer };
+  }) as FileHandle["write"]);
+  return { restore: () => spy.mockRestore(), count: () => count };
+}
+
 describe("copy_from_computer", () => {
+  it("finishes every short disk write before accepting the next network chunk", async () => {
+    const bytes = randomBytes(2 * MiB + 127);
+    disk.set("/tmp/short.bin", { bytes });
+    const writes = await boundDiskWrites();
+    try {
+      await expect(from("/tmp/short.bin")).resolves.toEqual({ path: "short.bin", bytes: bytes.length });
+      expect(readFileSync(join(folder, "short.bin")).equals(bytes)).toBe(true);
+      expect(writes.count()).toBeGreaterThan(bytes.length / 997);
+      expect(leftovers()).toEqual([]);
+    } finally { writes.restore(); }
+  });
+
+  it.each([0, 1])("keeps an existing file when a disk write makes no progress after %s writes", async (stopAfter) => {
+    disk.set("/tmp/short.bin", { bytes: randomBytes(8_192) });
+    writeFileSync(join(folder, "short.bin"), "previous complete file");
+    const writes = await boundDiskWrites({ stopAfter });
+    try {
+      await expect(from("/tmp/short.bin")).resolves.toEqual({ error: expect.stringContaining("nothing was saved") });
+      expect(writes.count()).toBe(stopAfter + 1);
+      expect(readFileSync(join(folder, "short.bin"), "utf8")).toBe("previous complete file");
+      expect(leftovers()).toEqual([]);
+    } finally { writes.restore(); }
+  });
+
+  it("preserves the old file and reports disk exhaustion after a short write", async () => {
+    disk.set("/tmp/short.bin", { bytes: randomBytes(8_192) });
+    writeFileSync(join(folder, "short.bin"), "previous complete file");
+    const writes = await boundDiskWrites({ stopAfter: 1, code: "ENOSPC" });
+    try {
+      await expect(from("/tmp/short.bin")).resolves.toEqual({ error: expect.stringContaining("Not enough space") });
+      expect(readFileSync(join(folder, "short.bin"), "utf8")).toBe("previous complete file");
+      expect(leftovers()).toEqual([]);
+    } finally { writes.restore(); }
+  });
+
+  it("stops the write loop when the copy is canceled", async () => {
+    disk.set("/tmp/short.bin", { bytes: randomBytes(8_192) });
+    writeFileSync(join(folder, "short.bin"), "previous complete file");
+    const controller = new AbortController();
+    const writes = await boundDiskWrites({ abort: controller });
+    try {
+      await expect(files.copyFromComputer(own, BOX, folder, { path: "/tmp/short.bin" }, controller.signal, plenty)).rejects.toMatchObject({ name: "AbortError" });
+      expect(writes.count()).toBe(1);
+      expect(readFileSync(join(folder, "short.bin"), "utf8")).toBe("previous complete file");
+      expect(leftovers()).toEqual([]);
+    } finally { writes.restore(); }
+  });
+
+  it("still preserves filesystem errors and accepts an empty download without writing", async () => {
+    disk.set("/tmp/empty.bin", { bytes: Buffer.alloc(0) });
+    disk.set("/tmp/fail.bin", { bytes: Buffer.from("payload") });
+    const writes = await boundDiskWrites({ stopAfter: 0, code: "EIO" });
+    try {
+      await expect(from("/tmp/empty.bin")).resolves.toEqual({ path: "empty.bin", bytes: 0 });
+      expect(writes.count()).toBe(0);
+      await expect(from("/tmp/fail.bin")).rejects.toMatchObject({ code: "EIO" });
+      expect(existsSync(join(folder, "fail.bin"))).toBe(false);
+      expect(leftovers()).toEqual([]);
+    } finally { writes.restore(); }
+  });
+
   it("mints a short-lived link on the own key, then fetches it without that key", async () => {
     disk.set("/home/user/out/result.json", { bytes: Buffer.from('{"rows":3}') });
     await expect(from("/home/user/out/result.json")).resolves.toEqual({ path: "result.json", bytes: 10 });

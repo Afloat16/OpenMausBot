@@ -147,7 +147,13 @@ export async function copyFromComputer(
         if (bytes > COPY_MAX_BYTES) return { error: tooBig(args.path, COPY_MAX_BYTES, true) };
         if (bytes + DISK_RESERVE_BYTES > free) return { error: noSpace(args.path, bytes, free, true) };
         try {
-          await handle.write(chunk.value);
+          let offset = 0;
+          while (offset < chunk.value.byteLength) {
+            signal.throwIfAborted();
+            const { bytesWritten } = await handle.write(chunk.value.subarray(offset));
+            if (bytesWritten === 0) throw new Error("File write made no progress");
+            offset += bytesWritten;
+          }
         } catch (error) {
           if ((error as NodeJS.ErrnoException).code === "ENOSPC") return { error: noSpace(args.path, bytes, free, true) };
           throw error;
