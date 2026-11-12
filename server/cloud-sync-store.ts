@@ -249,8 +249,9 @@ export class CloudSyncStore {
   }
 
   dropTrash(id: string): void {
-    this.db.prepare("DELETE FROM trash WHERE id = ?").run(id);
+    // A failed removal must keep its restore entry and storage accounting for a later retry.
     rmSync(join(this.syncDir(), "trash", id), { force: true });
+    this.db.prepare("DELETE FROM trash WHERE id = ?").run(id);
   }
 
   sweepTrash(): void {
