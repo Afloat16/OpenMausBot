@@ -1,0 +1,175 @@
+name: Fixture timing validation
+
+on:
+  push:
+    branches: [validation/openmaus-fixture-20261114-0826]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: ${{ matrix.phase }} isolated fixtures
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - phase: baseline
+            commit: a988d43206971d685b4198a6428b881a46035b4a
+            tree: bd8c6efce71747407dd190934091437074a37b9a
+          - phase: candidate
+            commit: 9682db3b355860c0b94c79ba8f7c968d007f21f2
+            tree: 89753722af8d744474e0725472d21594cd9fbf22
+    env:
+      VALIDATION_PHASE: ${{ matrix.phase }}
+      EXPECTED_COMMIT: ${{ matrix.commit }}
+      EXPECTED_TREE: ${{ matrix.tree }}
+      OMB_VITEST_WORKERS: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: Afloat16/OpenMausBot
+          ref: ${{ matrix.commit }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: pnpm/action-setup@ff378ebe6b225b0680b81c1ad4498ae0d1d3a5e3
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Verify exact source commit and tree
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT"
+          test "$(git rev-parse HEAD^{tree})" = "$EXPECTED_TREE"
+          git show -s --format=fuller HEAD
+      - run: pnpm install --frozen-lockfile
+      - name: Native suites and controlled before-after cases
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          
+          phase = os.environ['VALIDATION_PHASE']
+          evidence_dir = Path(os.environ['RUNNER_TEMP']) / 'openmaus-fixture-evidence'
+          evidence_dir.mkdir(parents=True, exist_ok=True)
+          room_path = Path('server/room-pages-point.e2e.test.ts')
+          routine_path = Path('server/routine-recovery.e2e.test.ts')
+          originals = {path: path.read_text() for path in (room_path, routine_path)}
+          summary = {'phase': phase, 'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(), 'stages': []}
+          
+          def once(source, old, new):
+              if source.count(old) != 1:
+                  raise RuntimeError(f'Expected one source seam, got {source.count(old)}: {old[:140]}')
+              return source.replace(old, new)
+          
+          def run(stage, files, pattern=None, expected_failure=None):
+              output = evidence_dir / f'{stage}.json'
+              command = ['pnpm', 'exec', 'vitest', 'run', *files, '--coverage.enabled=false', '--reporter=default', '--reporter=json', f'--outputFile={output}']
+              if pattern:
+                  command += ['-t', pattern]
+              process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+              (evidence_dir / f'{stage}.log').write_text(process.stdout)
+              print(process.stdout, flush=True)
+              if not output.exists():
+                  raise RuntimeError(f'{stage} produced no Vitest JSON report (exit {process.returncode})')
+              report = json.loads(output.read_text())
+              failures = [test for file in report.get('testResults', []) for test in file.get('assertionResults', []) if test.get('status') == 'failed']
+              record = {'stage': stage, 'command': command, 'exit': process.returncode, 'passed': report.get('numPassedTests'), 'failed': report.get('numFailedTests'), 'pending': report.get('numPendingTests'), 'failures': [{'name': test.get('fullName'), 'messages': test.get('failureMessages')} for test in failures]}
+              summary['stages'].append(record)
+              (evidence_dir / 'summary.json').write_text(json.dumps(summary, indent=2))
+              expected_executed = 9 if stage == 'native' else 1
+              if report.get('numPassedTests', 0) + report.get('numFailedTests', 0) != expected_executed:
+                  raise RuntimeError(f'{stage} did not execute exactly {expected_executed} selected tests')
+              if stage == 'native' and phase == 'baseline':
+                  allowed = ('sends a pick on a room page', 'picks a run that a restart cut off')
+                  if process.returncode and (not failures or any(not any(name in test.get('fullName', '') for name in allowed) for test in failures)):
+                      raise RuntimeError('Baseline native suite failed outside the two diagnosed cases')
+              elif expected_failure:
+                  messages = '\n'.join(message for test in failures for message in test.get('failureMessages', []))
+                  if process.returncode == 0 or len(failures) != 1 or expected_failure not in messages:
+                      raise RuntimeError(f'{stage} did not reproduce the expected failure: {expected_failure}')
+              elif process.returncode or failures:
+                  raise RuntimeError(f'{stage} must pass')
+          
+          try:
+              run('native', [str(room_path), str(routine_path)])
+          
+              room = originals[room_path]
+              notes_plan = '  writeFileSync(planPath, JSON.stringify({ [designer.id]: { steps: [], reply: "Done." }, [helper.id]: { steps: [{ tool: "show_html", arguments: { html: "<main><p>Notes</p></main>", title: "Notes" } }], reply: "Done." } }));'
+              gated_plan = '\n'.join([
+                  '  const notesReady = join(fixture.info.dataDir, "validation-notes-ready");',
+                  '  const notesGate = join(fixture.info.dataDir, "validation-notes-gate");',
+                  '  const helperBeforeNotes = evidence(helper.id).length;',
+                  notes_plan.replace('], reply: "Done." } }));', '], reply: "Done.", readyFile: notesReady, gateFile: notesGate } }));'),
+              ])
+              room = once(room, notes_plan, gated_plan)
+              old_wait = '  await settled(helper.id);' if phase == 'baseline' else '  await settled();'
+              notes_poll = '  await expect.poll(async () => (await transcript()).find((message) => message.kind === "app" && message.from?.botId === helper.id)?.id, { timeout: 30_000 }).toBeTruthy();'
+              controlled_wait = '\n'.join([
+                  notes_poll,
+                  '  await expect.poll(() => existsSync(notesReady), { timeout: 30_000 }).toBe(true);',
+                  '  let notesSettled = false;',
+                  '  let notesError: unknown;',
+                  '  const notesWait = ' + old_wait.strip().removeprefix('await ').removesuffix(';') + '.then(() => { notesSettled = true; }, (error) => { notesError = error; });',
+                  '  let settledWhileGateHeld = false;',
+                  '  let evidenceWhileGateHeld = -1;',
+                  '  try {',
+                  '    await new Promise((resolve) => setTimeout(resolve, 1_000));',
+                  '    settledWhileGateHeld = notesSettled;',
+                  '    evidenceWhileGateHeld = evidence(helper.id).length;',
+                  '  } finally { writeFileSync(notesGate, "go"); }',
+                  '  await notesWait;',
+                  '  if (notesError) throw notesError;',
+                  '  console.log("ROOM_WAIT_BOUNDARY", JSON.stringify({ settledWhileGateHeld, helperBeforeNotes, evidenceWhileGateHeld, afterWait: evidence(helper.id).length, groupThread: group.threadId, botThread: helper.threadId }));',
+                  '  expect(evidenceWhileGateHeld).toBe(helperBeforeNotes);',
+                  '  expect(settledWhileGateHeld, "wait must stay pending while Notes is gated").toBe(false);',
+                  '  expect(evidence(helper.id).length).toBe(helperBeforeNotes + 1);',
+              ])
+              room = once(room, notes_poll + '\n' + old_wait, controlled_wait)
+              room_path.write_text(room)
+              run('room-gated', [str(room_path)], expected_failure='wait must stay pending while Notes is gated' if phase == 'baseline' else None)
+              room_path.write_text(originals[room_path])
+          
+              routine = originals[routine_path]
+              routine = once(routine, 'const STALLED =', 'import { nextOccurrence } from "./routine-schedules.ts";\n\nconst STALLED =')
+              first = routine.index('it("picks a run that a restart cut off up again once on the next start, and never runs it twice"')
+              last = routine.index('it("keeps an ACP engine\'s run', first)
+              case = routine[first:last]
+              case = once(case, '  const s = await server();', '  const s = await server({ OMB_TEST_RESUME_CLOCK: "1" });')
+              case = once(case, '  const { id } = await s.runNow((await s.routine()).id);', '\n'.join([
+                  '  const routine = await s.routine();',
+                  '  const nextScheduled = nextOccurrence(routine.schedule, Date.now())!;',
+                  '  const { id } = await s.runNow(routine.id);',
+              ]))
+              case = once(case, 'verificationServerEnvironment({}, s.dataDir,', 'verificationServerEnvironment({ OMB_TEST_RESUME_CLOCK: "1" }, s.dataDir,')
+              case = once(case, '  await new Promise((resolve) => setTimeout(resolve, 3_000));', '\n'.join([
+                  '  writeFileSync(join(s.dataDir, "resume-clock-ms"), String(nextScheduled - Date.now() + 1_000));',
+                  '  await expect.poll(async () => (await s.api("PATCH", `/api/routines/${routine.id}`, { name: routine.name })).routine.updatedAt, { timeout: hostTimeout(10_000) }).toBeGreaterThanOrEqual(nextScheduled);',
+                  '  await new Promise((resolve) => setTimeout(resolve, 3_000));',
+                  '  console.log("ROUTINE_CRON_BOUNDARY", JSON.stringify({ nextScheduled, boundary: new Date(nextScheduled).toISOString(), enabled: routine.enabled, runs: (await s.runs()).map((run: any) => ({ id: run.id, manual: run.manual, triggerSource: run.triggerSource, scheduledFor: run.scheduledFor, retried: run.retried, status: run.status })) }));',
+              ]))
+              routine_path.write_text(routine[:first] + case + routine[last:])
+              run('routine-boundary', [str(routine_path)], pattern='picks a run that a restart cut off', expected_failure='to have a length of 1 but got 2' if phase == 'baseline' else None)
+          finally:
+              for path, source in originals.items():
+                  path.write_text(source)
+              (evidence_dir / 'summary.json').write_text(json.dumps(summary, indent=2))
+              subprocess.run(['git', 'diff', '--exit-code'], check=True)
+          
+          print(json.dumps(summary, indent=2), flush=True)
+          PY
+      - name: Lint the exact candidate fixture files
+        if: matrix.phase == 'candidate'
+        run: pnpm exec oxlint --deny-warnings server/room-pages-point.e2e.test.ts server/routine-recovery.e2e.test.ts
+      - name: Preserve test logs and JSON evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: fixture-timing-${{ matrix.phase }}-${{ matrix.commit }}
+          path: ${{ runner.temp }}/openmaus-fixture-evidence
+          if-no-files-found: error
+          retention-days: 14
