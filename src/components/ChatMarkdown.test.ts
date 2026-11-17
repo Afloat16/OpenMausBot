@@ -857,6 +857,21 @@ describe("ChatMarkdown attachments", () => {
     }
   });
 
+  it.each(["/Users/José/reports/q3.md", "/Users/Jose\u0301/reports/q3.md", "/home/李明/报告.md"])("renders and authorizes the whole Unicode path %s", (path) => {
+    const text = `Saved ${path}.`;
+    const save = vi.spyOn(AttachmentPreview, "useLocalFileSave");
+    try {
+      renderToStaticMarkup(createElement(ChatMarkdown, { text, message: { threadId: "thread-1", messageId: "message-1" } }));
+      const requested = save.mock.calls[0]?.[0];
+      expect(requested).toBeDefined();
+      expect(decodeURIComponent(requested!)).toBe(path);
+      expect(messageReferencesFile(text, requested!)).toBe(true);
+      expect(messageReferencesFile(text, "/reports/q3.md")).toBe(false);
+    } finally {
+      save.mockRestore();
+    }
+  });
+
   it("does not authorize a path the message never rendered as a link", () => {
     expect(messageReferencesFile("Use and/or here, or /etc alone.", "/etc")).toBe(false);
     expect(messageReferencesFile("```\ncat /Users/maus/notes.md\n```", "/Users/maus/notes.md")).toBe(false);

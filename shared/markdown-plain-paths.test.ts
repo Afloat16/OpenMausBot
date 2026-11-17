@@ -32,6 +32,10 @@ describe("plain file paths", () => {
     expect(links("Run `npm test` in `src`.")).toEqual([]);
   });
 
+  it.each(["/Users/José/reports/q3.md", "/Users/Jose\u0301/reports/q3.md", "/home/李明/报告.md", "/home/山田/レポート.md"])("links the complete Unicode path %s", (path) => {
+    expect(links(`Saved ${path}.`)).toEqual([path]);
+  });
+
   it("reads a POSIX path's Markdown escapes as escapes", () => {
     expect(links(String.raw`Saved /tmp/out/my\_notes.md`)).toEqual(["/tmp/out/my_notes.md"]);
   });
@@ -39,6 +43,7 @@ describe("plain file paths", () => {
   it("leaves prose, web links, code blocks and existing links alone", () => {
     expect(links("Use and/or, see 1/2.5 or /etc alone.")).toEqual([]);
     expect(links("See https://example.com/docs/guide.md for more.")).toEqual([]);
+    expect(links("See https://example.com/José/reports/q3.md for more.")).toEqual([]);
     expect(links("```\ncat /Users/me/notes.md\n```")).toEqual([]);
     expect(links("[the report](/Users/me/report.md)")).toEqual(["/Users/me/report.md"]);
   });

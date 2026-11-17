@@ -13,16 +13,16 @@ type Node = {
 
 const SKIP = new Set(["link", "linkReference", "definition", "code", "html", "math", "inlineMath", "image", "imageReference"]);
 const EXT = String.raw`\.[A-Za-z0-9]{1,10}`;
-const POSIX_PART = String.raw`(?:[\w.@+~-]|\\[_*~.-])`;
+const POSIX_PART = String.raw`(?:[\p{L}\p{M}\p{N}_.@+~-]|\\[_*~.-])`;
 const WIN_PART = String.raw`[^\s\\/:*?"<>|\x60()\[\]]`;
 // A path needs a folder and a file name with an extension, so "and/or" or a lone "/etc" stays prose.
 const PROSE_PATH = new RegExp(
   [
-    String.raw`(?<![\w.~/\\:@-])\/(?:${POSIX_PART}+\/)+${POSIX_PART}*[\w@+~-]${EXT}(?![\w/\\])`,
+    String.raw`(?<![\p{L}\p{M}\p{N}_.~/\\:@-])\/(?:${POSIX_PART}+\/)+${POSIX_PART}*[\p{L}\p{M}\p{N}_@+~-]${EXT}(?![\p{L}\p{M}\p{N}_/\\])`,
     String.raw`(?<![\w\\/])[A-Za-z]:\\(?:${WIN_PART}+\\)*${WIN_PART}*[^\s\\/:*?"<>|\x60()\[\].]${EXT}(?![\w\\])`,
     String.raw`(?<![\w\\])\\\\${WIN_PART}+(?:\\${WIN_PART}+)+${EXT}(?![\w\\])`,
   ].join("|"),
-  "g",
+  "gu",
 );
 // In backticks the whole span is the path, so spaces are allowed and no extension is needed.
 const CODE_PATH = /^(?:\/(?:[^\s/][^/]*\/)+[^/]+|[A-Za-z]:\\(?:[^\\]+\\?)+|\\\\[^\\]+(?:\\[^\\]+)+)$/;
