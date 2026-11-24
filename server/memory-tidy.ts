@@ -18,11 +18,13 @@ export interface TidyPlan {
   deferred: number;
 }
 
-function duplicatesOf(live: readonly MemoryEntryLine[]): MemoryEntryLine[] {
+function duplicatesOf(text: string, live: readonly MemoryEntryLine[]): MemoryEntryLine[] {
+  const lines = text.split(/\r?\n/);
   const byKey = new Map<string, MemoryEntryLine[]>();
   for (const entry of live) {
-    const key = factIdentity(entry.body);
-    if (!key) continue;
+    const fact = factIdentity(entry.body);
+    if (!fact) continue;
+    const key = JSON.stringify([fact, entry.until, lines.slice(entry.line + 1, entry.end)]);
     byKey.set(key, [...(byKey.get(key) ?? []), entry]);
   }
   const older: MemoryEntryLine[] = [];
@@ -36,7 +38,7 @@ function duplicatesOf(live: readonly MemoryEntryLine[]): MemoryEntryLine[] {
 
 export function contradictionCandidates(text: string, today: string): MemoryEntryLine[] {
   const live = parseMemoryEntries(text).filter((e) => !e.struck && !isExpired(e, today));
-  const dupes = new Set(duplicatesOf(live).map((e) => e.line));
+  const dupes = new Set(duplicatesOf(text, live).map((e) => e.line));
   return live.filter((e) => !dupes.has(e.line));
 }
 
@@ -48,7 +50,7 @@ export function planTidy(text: string, today: string, contradictions: readonly C
   const entries = parseMemoryEntries(text);
   const expired = entries.filter((e) => isExpired(e, today));
   const live = entries.filter((e) => !e.struck && !isExpired(e, today));
-  const duplicates = duplicatesOf(live);
+  const duplicates = duplicatesOf(text, live);
   const candidates = contradictionCandidates(text, today);
   const budget = Math.max(minimumBudget, contradictionBudget(live.length));
   const touched = new Set<number>();
@@ -77,8 +79,8 @@ export function planChanges(plan: TidyPlan): number {
 
 export function applyTidy(text: string, plan: TidyPlan, today: string): { text: string; archived: string[] } {
   const lines = text.split("\n");
-  const drop = new Set<number>(plan.duplicates.map((e) => e.line));
-  for (const entry of plan.expired) {
+  const drop = new Set<number>();
+  for (const entry of [...plan.expired, ...plan.duplicates]) {
     for (let index = entry.line; index < entry.end; index += 1) drop.add(index);
   }
   for (const { loser, remainder } of plan.superseded) {

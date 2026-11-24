@@ -237,6 +237,8 @@ off. It keeps the notes in shape without the bot having to decide to:
 "Exactly the same fact" is narrow on purpose: spacing, a bullet and a final
 full stop are ignored, nothing else — `Balance is -10` and `Balance is 10`,
 `C++` and `C`, `1.5` and `15` are different facts.
+Continuation lines must match too, including spaces inside code, and the
+entries must have the same until date. A duplicate is removed as a complete entry.
 
 Every upkeep change is a journal row by **Memory upkeep** and can be undone.
 Upkeep pauses while a backup runs. The model steps need an engine with a
