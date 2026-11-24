@@ -10,9 +10,11 @@ export function cliToLaunch(cli: string, checked: string | undefined, platform: 
 // still finds the same copy of the CLI, so a newly found copy is never reported with another copy's version.
 export function cliVersionProbe(cli: string, run: typeof execCli = execCli, platform: NodeJS.Platform = process.platform) {
   let read = cliVersionReader(cli), readAt: string | undefined;
-  let pending: { path: string | undefined; probe: Promise<ReturnType<typeof read>> } | undefined; // shared only by callers with the same PATH
+  const pending = new Map<string | undefined, Promise<ReturnType<typeof read>>>();
   return (env: NodeJS.ProcessEnv): Promise<ReturnType<typeof read>> => {
-    if (pending && pending.path === env.PATH) return pending.probe;
+    const path = env.PATH;
+    const existing = pending.get(path);
+    if (existing) return existing;
     const at = findCliCandidates(cli, env.PATH ?? "")[0];
     if (at !== readAt) [read, readAt] = [cliVersionReader(cli), at];
     const reader = read;
@@ -20,12 +22,12 @@ export function cliVersionProbe(cli: string, run: typeof execCli = execCli, plat
     const attempt = () => new Promise<{ error: Error | null; stdout: string }>((resolve) => {
       run(cliToLaunch(cli, at, platform), ["--version"], { timeout: Math.max(1, deadline - Date.now()), env }, (error, stdout) => resolve({ error, stdout }));
     });
-    const entry: NonNullable<typeof pending> = { path: env.PATH, probe: (async () => {
+    const probe = (async () => {
       let result = await attempt();
       if (!result.error && !result.stdout.trim() && Date.now() < deadline) result = await attempt();
       return reader(result.error, result.stdout);
-    })().finally(() => { if (pending === entry) pending = undefined; }) };
-    pending = entry;
-    return entry.probe;
+    })().finally(() => { pending.delete(path); });
+    pending.set(path, probe);
+    return probe;
   };
 }

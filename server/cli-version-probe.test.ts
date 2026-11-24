@@ -40,6 +40,28 @@ it("never hands a caller the version of a probe started with a different PATH", 
   expect(run).toHaveBeenCalledTimes(2);
 });
 
+it("shares an earlier in-flight probe even after a caller with another PATH arrives", async () => {
+  vi.useFakeTimers();
+  const run = vi.fn<typeof execCli>((_cli, _args, options, callback) => {
+    const version = options.env?.PATH === "first" ? "1.0.0" : "2.0.0";
+    setTimeout(() => callback(null, version), 1_000);
+  });
+  const probe = cliVersionProbe("claude", run);
+  const first = probe({ PATH: "first" });
+  const second = probe({ PATH: "second" });
+  expect(probe({ PATH: "first" })).toBe(first);
+  expect(probe({ PATH: "second" })).toBe(second);
+  await vi.advanceTimersByTimeAsync(1_000);
+  expect(await first).toEqual({ version: "1.0.0" });
+  expect(await second).toEqual({ version: "2.0.0" });
+  expect(run).toHaveBeenCalledTimes(2);
+  const next = probe({ PATH: "first" });
+  expect(next).not.toBe(first);
+  await vi.advanceTimersByTimeAsync(1_000);
+  expect(await next).toEqual({ version: "1.0.0" });
+  expect(run).toHaveBeenCalledTimes(3);
+});
+
 it("retries an empty success once within the original thirty-second budget", async () => {
   vi.useFakeTimers();
   const run = vi.fn<typeof execCli>()
